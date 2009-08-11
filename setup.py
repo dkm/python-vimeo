@@ -26,7 +26,7 @@ setup (
     long_description = """
 Python module for using API offered by vimeo
 """,
-    version = "0.1",
+    version = "0.2",
     author = 'Marc Poulhiès',
     author_email = 'dkm@kataplop.net',
     url = "http://github.com/dkm/python-vimeo",
@@ -34,5 +34,6 @@ Python module for using API offered by vimeo
     maintainer_email = 'dkm@kataplop.net',
     license = "GPL",
     packages = ['vimeo'],
+    scripts=['bin/vimeo-upload.py'],
     )
 
