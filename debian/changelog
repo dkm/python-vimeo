@@ -1,3 +1,9 @@
+python-vimeo (0.2-1~ppa1) jaunty; urgency=low
+
+  * add a simple upload script
+
+ -- Marc Poulhiès <dkm@kataplop.net>  Tue, 11 Aug 2009 10:31:36 +0200
+
 python-vimeo (0.1-1~ppa1) jaunty; urgency=low
 
   * Initial release

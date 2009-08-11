@@ -11,3 +11,11 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, python (>=2.5)
 Description: python module for using vimeo
  Python module for using API offered by vimeo
 
+
+Package: vimeo-tools
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (>=2.5), python-vimeo
+Description: tools to handle videos on Vimeo
+ tools to handle videos on Vimeo
+
+
