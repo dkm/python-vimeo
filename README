@@ -1,5 +1,9 @@
 This a python module for using Vimeo's API.
 
+The current code uses old v1 API, which is deprecated, and goind fo retirement soon.
+I should rewrite nearly everything for the v2:
+ http://vimeo.com/api/docs/methods
+
 It is not supporting the whole API, for the simple reason that I don't
 have time for this.  But most of the methods would simply be a matter
 of copy/paste, so anyone willing the support for a new methods can
