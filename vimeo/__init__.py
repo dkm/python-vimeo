@@ -18,39 +18,40 @@
 # You should have received a copy of the GNU General Public License
 # along with Plopifier.  If not, see <http://www.gnu.org/licenses/>.
 
-import hmac
-import hashlib
-import base64
+# this is stupid, use python-oauth instead!
+# import hmac
+# import hashlib
+# import base64
 
-## do not move the '%' from the begining!
-percent_encode = {
-    '%' : "%25",
-    '!' : "%21",
-    '*' : "%2A",
-    "'" : "%27",
-    '(' : "%28", 
-    ')' : "%29", 
-    ';' : "%3B",
-    ':' : "%3A",
-    '@' : "%40",
-    '&' : "%26",
-    '=' : "%3D",
-    '+' : "%2B",
-    '$' : "%24",
-    ',' : "%2C",
-    '/' : "%2F",
-    '?' : "%3F",
-    '#' : "%23",
-    '[' : "%5B",
-    ']' : "%5D",
-}
+# ## do not move the '%' from the begining!
+# percent_encode = {
+#     '%' : "%25",
+#     '!' : "%21",
+#     '*' : "%2A",
+#     "'" : "%27",
+#     '(' : "%28", 
+#     ')' : "%29", 
+#     ';' : "%3B",
+#     ':' : "%3A",
+#     '@' : "%40",
+#     '&' : "%26",
+#     '=' : "%3D",
+#     '+' : "%2B",
+#     '$' : "%24",
+#     ',' : "%2C",
+#     '/' : "%2F",
+#     '?' : "%3F",
+#     '#' : "%23",
+#     '[' : "%5B",
+#     ']' : "%5D",
+# }
 
-def percent_encode_str(str_to_enc):
-    for k,v in percent_encode.items():
-        str_to_enc = str_to_enc.replace(k,v)
-    return str_to_enc
+# def percent_encode_str(str_to_enc):
+#     for k,v in percent_encode.items():
+#         str_to_enc = str_to_enc.replace(k,v)
+#     return str_to_enc
 
-def gen_sig(str_to_sign, key):
-    hm = hmac.new(key, digest=hashlib.sha1())
-    hm.update(str_to_sign)
-    return base64.b64encode(hm.digest())
+# def gen_sig(str_to_sign, key):
+#     hm = hmac.new(key, digest=hashlib.sha1())
+#     hm.update(str_to_sign)
+#     return base64.b64encode(hm.digest())
