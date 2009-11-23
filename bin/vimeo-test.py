@@ -20,6 +20,24 @@
 from vimeo import SimpleOAuthClient
 import oauth.oauth as oauth
 import sys
+import optparse
+
+def main(argv):
+    parser = optparse.OptionParser(
+        usage='Usage: %prog [options]',
+        description="Simple Vimeo uploader")
+    parser.add_option('-k', '--key',
+                      help="Auth key")
+    parser.add_option('-s', '--secret',
+                      help="Auth secret")
+
+    (options, args) = parser.parse_args(argv[1:])
+    
+    if None in (options.key, options.secret):
+        print "Missing key or secret"
+        sys.exit(-1)
+    
+    run_example(options.key, options.secret)
 
 def run_example(key, secret):
     client = SimpleOAuthClient("vimeo.com")
