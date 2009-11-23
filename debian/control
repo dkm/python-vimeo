@@ -7,7 +7,7 @@ Standards-Version: 3.8.1
 
 Package: python-vimeo
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, python (>=2.5)
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (>=2.5), python-oauth
 Description: python module for using vimeo
  Python module for using API offered by vimeo
 
