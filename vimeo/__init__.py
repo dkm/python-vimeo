@@ -18,40 +18,27 @@
 # You should have received a copy of the GNU General Public License
 # along with Plopifier.  If not, see <http://www.gnu.org/licenses/>.
 
-# this is stupid, use python-oauth instead!
-# import hmac
-# import hashlib
-# import base64
+import httplib
+import oauth.oauth as oauth
 
-# ## do not move the '%' from the begining!
-# percent_encode = {
-#     '%' : "%25",
-#     '!' : "%21",
-#     '*' : "%2A",
-#     "'" : "%27",
-#     '(' : "%28", 
-#     ')' : "%29", 
-#     ';' : "%3B",
-#     ':' : "%3A",
-#     '@' : "%40",
-#     '&' : "%26",
-#     '=' : "%3D",
-#     '+' : "%2B",
-#     '$' : "%24",
-#     ',' : "%2C",
-#     '/' : "%2F",
-#     '?' : "%3F",
-#     '#' : "%23",
-#     '[' : "%5B",
-#     ']' : "%5D",
-# }
+REQUEST_TOKEN_URL = 'http://vimeo.com/oauth/request_token'
+ACCESS_TOKEN_URL = 'http://vimeo.com/oauth/access_token'
+AUTHORIZATION_URL = 'http://vimeo.com/oauth/authorize'
 
-# def percent_encode_str(str_to_enc):
-#     for k,v in percent_encode.items():
-#         str_to_enc = str_to_enc.replace(k,v)
-#     return str_to_enc
+class SimpleOAuthClient(oauth.OAuthClient):
 
-# def gen_sig(str_to_sign, key):
-#     hm = hmac.new(key, digest=hashlib.sha1())
-#     hm.update(str_to_sign)
-#     return base64.b64encode(hm.digest())
+    def __init__(self, server, port=httplib.HTTP_PORT, request_token_url=REQUEST_TOKEN_URL, 
+                 access_token_url=ACCESS_TOKEN_URL, authorization_url=AUTHORIZATION_URL):
+        self.server = server
+        self.port = port
+        self.request_token_url = request_token_url
+        self.access_token_url = access_token_url
+        self.authorization_url = authorization_url
+        self.connection = httplib.HTTPConnection("%s:%d" % (self.server, self.port))
+
+    def fetch_request_token(self, oauth_request):
+        # via headers
+        # -> OAuthToken
+        self.connection.request(oauth_request.http_method, self.request_token_url, headers=oauth_request.to_header()) 
+        response = self.connection.getresponse()
+        return oauth.OAuthToken.from_string(response.read())
