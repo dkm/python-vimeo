@@ -29,7 +29,7 @@ REQUEST_TOKEN_URL = 'http://vimeo.com/oauth/request_token'
 ACCESS_TOKEN_URL = 'http://vimeo.com/oauth/access_token'
 AUTHORIZATION_URL = 'http://vimeo.com/oauth/authorize'
 
-API_REST_CALL_URL = 'http://vimeo.com/api/rest/v2/'
+API_REST_URL = 'http://vimeo.com/api/rest/v2/'
 API_V2_CALL_URL = 'http://vimeo.com/api/v2/'
 
 PORT=80
@@ -90,6 +90,7 @@ class CurlyRequest:
         curl.close()
         p = self.buf
         self.buf = ""
+        print p
         return p
     
     def upload_progress(self, download_t, download_d, upload_t, upload_d):
@@ -144,29 +145,33 @@ class SimpleOAuthClient(oauth.OAuthClient):
         self.request_token_url = request_token_url
         self.access_token_url = access_token_url
         self.authorization_url = authorization_url
-
-        self.consumer = None
-        self.token = None
-##        self.connection = httplib.HTTPConnection("%s:%d" % (self.server, self.port))
-
-
-    def get_token(self):
         self.consumer = oauth.OAuthConsumer(self.key, self.secret)
+        self.token = None
+
+    def get_request_token(self):
         oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, 
                                                                    http_url=self.request_token_url)
         oauth_request.sign_request(HMAC_SHA1, self.consumer, None)
-        print 'parameters: %s' % str(oauth_request.parameters)
-        self.token = self.fetch_request_token(oauth_request)
-        print "Token:", self.token
+        self.token = self.fetch_token(oauth_request)
 
 
-    def authorize_token(self, oauth_request):
-        # via url
+    def get_authorize_token_url(self):
         # -> typically just some okay response
-        print oauth_request.to_url()
-##        return self.do_request(oauth_request.to_url())
+        oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token, http_url=self.authorization_url)
+        return oauth_request.to_url()
+##        return self.curly.do_request(oauth_request.to_url())
 
-    def fetch_request_token(self, oauth_request):
+
+    def get_access_token(self, verifier):
+        self.token.set_verifier(verifier)
+        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, 
+                                                                   token=self.token, 
+                                                                   verifier=verifier, 
+                                                                   http_url=self.access_token_url)
+        oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
+        self.token = self.fetch_token(oauth_request)
+
+    def fetch_token(self, oauth_request):
         ans = self.curly.do_request(oauth_request.to_url())
         return oauth.OAuthToken.from_string(ans)
 
@@ -177,10 +182,9 @@ class SimpleOAuthClient(oauth.OAuthClient):
         oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
                                                                    token=self.token,
                                                                    http_method='GET',
-                                                                   http_url=API_REST_CALL_URL,
+                                                                   http_url=API_REST_URL,
                                                                    parameters={'method': "vimeo.videos.upload.getQuota"})
         oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
-
         self.curly.do_rest_call(oauth_request.to_url())
     
 

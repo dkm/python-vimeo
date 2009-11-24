@@ -18,6 +18,7 @@
 # along with Plopifier.  If not, see <http://www.gnu.org/licenses/>.
 
 from vimeo import SimpleOAuthClient
+import vimeo
 import oauth.oauth as oauth
 import sys
 import optparse
@@ -38,7 +39,12 @@ def main(argv):
         sys.exit(-1)
     
     client = SimpleOAuthClient(options.key, options.secret)
-    client.get_token()
+    client.get_request_token()
+    print client.get_authorize_token_url()
+    verifier = sys.stdin.readline().strip()
+    print "Using ", verifier, " as verifier"
+    print client.get_access_token(verifier)
+
     client.vimeo_videos_upload_getQuota()
     # oauth_request = oauth.OAuthRequest.from_token_and_callback(token=token, 
     #                                                            http_url=client.authorization_url)
@@ -54,6 +60,6 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv)
-    ##run_example(sys.argv[1], sys.argv[2])
+    ##print vimeo.user_videos('dkm')
 
 
