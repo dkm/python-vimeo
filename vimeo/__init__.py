@@ -184,21 +184,25 @@ class SimpleOAuthClient(oauth.OAuthClient):
         self.curly.do_rest_call(oauth_request.to_url())
     
 
+def _simple_request(url, format):
+    if format != 'xml':
+        raise VimeoException("Sorry, only 'xml' supported. '%s' was requested." %format)
+
+    curly = CurlyRequest()
+    url = url %(format)
+    ans = curly.do_request(url)
+
+    if format == 'xml':
+        return ET.fromstring(ans)
+
 ##
 ## User related call from the "Simple API".
 ## See : http://vimeo.com/api/docs/simple-api
 ##
 
 def _user_request(user, info, format):
-    if format != 'xml':
-        raise VimeoException("Sorry, only 'xml' supported. '%s' was requested." %format)
-
-    curly = CurlyRequest()
-    url = API_V2_CALL_URL + '%s/%s.%s' %(user,info,format)
-    ans = curly.do_request(url)
-
-    if format == 'xml':
-        return ET.fromstring(ans)
+    url = API_V2_CALL_URL + '%s/%s.%%s' %(user,info)
+    return _simple_request(url, format)
 
 def user_info(user, format="xml"):
     """
@@ -266,4 +270,12 @@ def user_contacts_like(user, format="xml"):
     Videos that the user's contacts like
     """
     return _user_request(user, inspect.stack()[0][3][5:], format)
+
+
+##
+## get a specific video
+##
+def video_request(video, format):
+    url = API_V2_CALL_URL + 'video/%s.%%s' %(video)
+    return _simple_request(url)
 
