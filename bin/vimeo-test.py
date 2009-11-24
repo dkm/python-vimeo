@@ -4,7 +4,7 @@
 #
 # Python module for Vimeo
 #
-# Plopifier is free software: you can redistribute it and/or modify
+# python-vimeo is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -46,11 +46,12 @@ def run_example(key, secret):
     signature_method_hmac_sha1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
     oauth_request = oauth.OAuthRequest.from_consumer_and_token(consumer, http_url=client.request_token_url)
     oauth_request.sign_request(signature_method_hmac_sha1, consumer, None)
-    print 'REQUEST (via headers)'
     print 'parameters: %s' % str(oauth_request.parameters)
     token = client.fetch_request_token(oauth_request)
+    print "Token:", token
 
 if __name__ == '__main__':
-    run_example(sys.argv[1], sys.argv[2])
+    main(sys.argv)
+    ##run_example(sys.argv[1], sys.argv[2])
 
 

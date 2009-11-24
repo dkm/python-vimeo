@@ -18,27 +18,45 @@
 # You should have received a copy of the GNU General Public License
 # along with Plopifier.  If not, see <http://www.gnu.org/licenses/>.
 
-import httplib
+import urllib
+import pycurl
+
 import oauth.oauth as oauth
 
 REQUEST_TOKEN_URL = 'http://vimeo.com/oauth/request_token'
 ACCESS_TOKEN_URL = 'http://vimeo.com/oauth/access_token'
 AUTHORIZATION_URL = 'http://vimeo.com/oauth/authorize'
 
+PORT=80
+
 class SimpleOAuthClient(oauth.OAuthClient):
 
-    def __init__(self, server, port=httplib.HTTP_PORT, request_token_url=REQUEST_TOKEN_URL, 
+    def __init__(self, server, port=PORT, request_token_url=REQUEST_TOKEN_URL, 
                  access_token_url=ACCESS_TOKEN_URL, authorization_url=AUTHORIZATION_URL):
         self.server = server
-        self.port = port
+        self.port = PORT
         self.request_token_url = request_token_url
         self.access_token_url = access_token_url
         self.authorization_url = authorization_url
-        self.connection = httplib.HTTPConnection("%s:%d" % (self.server, self.port))
+##        self.connection = httplib.HTTPConnection("%s:%d" % (self.server, self.port))
+
+        self.buf = None
+
+    def body_callback(self, buf):
+        self.buf += buf
+
+    def do_request(self, url):
+        self.buf = ""
+        curl = pycurl.Curl()
+        curl.setopt(curl.URL, url)
+        curl.setopt(curl.WRITEFUNCTION, self.body_callback)
+        curl.perform()
+        curl.close()
+        p = self.buf
+        self.buf = ""
+        return p
+
 
     def fetch_request_token(self, oauth_request):
-        # via headers
-        # -> OAuthToken
-        self.connection.request(oauth_request.http_method, self.request_token_url, headers=oauth_request.to_header()) 
-        response = self.connection.getresponse()
-        return oauth.OAuthToken.from_string(response.read())
+        ans = self.do_request(oauth_request.to_url())
+        return oauth.OAuthToken.from_string(ans)
