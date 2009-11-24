@@ -37,18 +37,20 @@ def main(argv):
         print "Missing key or secret"
         sys.exit(-1)
     
-    run_example(options.key, options.secret)
+    client = SimpleOAuthClient(options.key, options.secret)
+    client.get_token()
+    client.vimeo_videos_upload_getQuota()
+    # oauth_request = oauth.OAuthRequest.from_token_and_callback(token=token, 
+    #                                                            http_url=client.authorization_url)
+    # response = client.authorize_token(oauth_request)
+    # print response
 
-def run_example(key, secret):
-    client = SimpleOAuthClient("vimeo.com")
-    consumer = oauth.OAuthConsumer(key, secret)
-    signature_method_plaintext = oauth.OAuthSignatureMethod_PLAINTEXT()
-    signature_method_hmac_sha1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
-    oauth_request = oauth.OAuthRequest.from_consumer_and_token(consumer, http_url=client.request_token_url)
-    oauth_request.sign_request(signature_method_hmac_sha1, consumer, None)
-    print 'parameters: %s' % str(oauth_request.parameters)
-    token = client.fetch_request_token(oauth_request)
-    print "Token:", token
+    # oauth_request = oauth.OAuthRequest.from_consumer_and_token(consumer, 
+    #                                                            token=token, 
+    #                                                            http_method='GET', 
+    #                                                            http_url=RESOURCE_URL, 
+    #                                                            parameters=parameters)
+    # oauth_request.sign_request(signature_method_hmac_sha1, consumer, token)
 
 if __name__ == '__main__':
     main(sys.argv)
