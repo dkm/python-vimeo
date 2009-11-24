@@ -21,6 +21,7 @@
 import urllib
 import pycurl
 import xml.etree.ElementTree as ET
+import inspect
 
 import oauth.oauth as oauth
 
@@ -28,7 +29,8 @@ REQUEST_TOKEN_URL = 'http://vimeo.com/oauth/request_token'
 ACCESS_TOKEN_URL = 'http://vimeo.com/oauth/access_token'
 AUTHORIZATION_URL = 'http://vimeo.com/oauth/authorize'
 
-API_CALL_URL = 'http://vimeo.com/api/rest/v2/'
+API_REST_CALL_URL = 'http://vimeo.com/api/rest/v2/'
+API_V2_CALL_URL = 'http://vimeo.com/api/v2/'
 
 PORT=80
 
@@ -175,9 +177,93 @@ class SimpleOAuthClient(oauth.OAuthClient):
         oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
                                                                    token=self.token,
                                                                    http_method='GET',
-                                                                   http_url=API_CALL_URL,
+                                                                   http_url=API_REST_CALL_URL,
                                                                    parameters={'method': "vimeo.videos.upload.getQuota"})
         oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
 
         self.curly.do_rest_call(oauth_request.to_url())
     
+
+##
+## User related call from the "Simple API".
+## See : http://vimeo.com/api/docs/simple-api
+##
+
+def _user_request(user, info, format):
+    if format != 'xml':
+        raise VimeoException("Sorry, only 'xml' supported. '%s' was requested." %format)
+
+    curly = CurlyRequest()
+    url = API_V2_CALL_URL + '%s/%s.%s' %(user,info,format)
+    ans = curly.do_request(url)
+
+    if format == 'xml':
+        return ET.fromstring(ans)
+
+def user_info(user, format="xml"):
+    """
+    User info for the specified user
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+
+def user_videos(user, format="xml"):
+    """
+    Videos created by user
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_likes(user, format="xml"):
+    """
+    Videos the user likes
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_appears_in(user, format="xml"):
+    """
+    Videos that the user appears in
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_all_videos(user, format="xml"):
+    """
+    Videos that the user appears in and created
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_subscriptions(user, format="xml"):
+    """
+    Videos the user is subscribed to
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_albums(user, format="xml"):
+    """
+    Albums the user has created
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_channels(user, format="xml"):
+    """
+    Channels the user has created and subscribed to
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_groups(user, format="xml"):
+    """
+    Groups the user has created and joined
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_contacts_videos(user, format="xml"):
+    """
+    Videos that the user's contacts created
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
+def user_contacts_like(user, format="xml"):
+    """
+    Videos that the user's contacts like
+    """
+    return _user_request(user, inspect.stack()[0][3][5:], format)
+
