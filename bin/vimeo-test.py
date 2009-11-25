@@ -28,22 +28,32 @@ def main(argv):
         usage='Usage: %prog [options]',
         description="Simple Vimeo uploader")
     parser.add_option('-k', '--key',
-                      help="Auth key")
+                      help="Consumer key")
     parser.add_option('-s', '--secret',
-                      help="Auth secret")
+                      help="Consumer secret")
+    parser.add_option('-t', '--access-token',
+                      help="Access token")
+    parser.add_option('-y', '--access-token-secret',
+                      help="Access token secret")
+
 
     (options, args) = parser.parse_args(argv[1:])
     
     if None in (options.key, options.secret):
         print "Missing key or secret"
         sys.exit(-1)
-    
-    client = SimpleOAuthClient(options.key, options.secret)
-    client.get_request_token()
-    print client.get_authorize_token_url()
-    verifier = sys.stdin.readline().strip()
-    print "Using ", verifier, " as verifier"
-    print client.get_access_token(verifier)
+
+    if None in (options.access_token, options.access_token_secret):
+        client = SimpleOAuthClient(options.key, options.secret)
+        client.get_request_token()
+        print client.get_authorize_token_url()
+        verifier = sys.stdin.readline().strip()
+        print "Using ", verifier, " as verifier"
+        print client.get_access_token(verifier)
+    else:
+        client = SimpleOAuthClient(options.key, options.secret,
+                                   token=options.access_token,
+                                   token_secret=options.access_token_secret)
 
     client.vimeo_videos_upload_getQuota()
     # oauth_request = oauth.OAuthRequest.from_token_and_callback(token=token, 

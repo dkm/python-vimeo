@@ -136,7 +136,9 @@ class SimpleOAuthClient(oauth.OAuthClient):
                  server="vimeo.com", port=PORT, 
                  request_token_url=REQUEST_TOKEN_URL, 
                  access_token_url=ACCESS_TOKEN_URL, 
-                 authorization_url=AUTHORIZATION_URL):
+                 authorization_url=AUTHORIZATION_URL,
+                 token=None,
+                 token_secret=None):
         self.curly = CurlyRequest()
         self.key = key
         self.secret = secret
@@ -146,8 +148,12 @@ class SimpleOAuthClient(oauth.OAuthClient):
         self.access_token_url = access_token_url
         self.authorization_url = authorization_url
         self.consumer = oauth.OAuthConsumer(self.key, self.secret)
-        self.token = None
 
+        if token != None and token_secret != None:
+            self.token = oauth.OAuthToken(token, token_secret)
+        else:
+            self.token = None
+        
     def get_request_token(self):
         oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, 
                                                                    http_url=self.request_token_url)
