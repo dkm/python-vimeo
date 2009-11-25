@@ -18,11 +18,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Plopifier.  If not, see <http://www.gnu.org/licenses/>.
 
+
+"""
+Python module to interact with Vimeo through its API (version 2)
+"""
+
 import urllib
 import pycurl
 import xml.etree.ElementTree as ET
 import inspect
-
+##from oauth import OAuthRequest, OAuthToken
 import oauth.oauth as oauth
 
 REQUEST_TOKEN_URL = 'http://vimeo.com/oauth/request_token'
@@ -59,12 +64,21 @@ class CurlyRestException(Exception):
 
 
 class CurlyRequest:
+    """
+    A CurlyRequest object is used to send HTTP requests.
+    It's a simple wrapper around basic curl methods.
+    In particular, it can upload files and display a progress bar.
+    """
     def __init__(self, pbarsize=19):
         self.buf = None
         self.pbar_size = pbarsize
         self.pidx = 0
 
     def do_rest_call(self, url):
+        """
+        Send a simple GET request and interpret the answer as a REST reply.
+        """
+
         res = self.do_request(url)
         try:
             t = ET.fromstring(res)
@@ -78,22 +92,24 @@ class CurlyRequest:
             print "Error with:", res
             raise e
 
-    def body_callback(self, buf):
+    def _body_callback(self, buf):
         self.buf += buf
 
     def do_request(self, url):
+        """
+        Send a simple GET request
+        """
         self.buf = ""
         curl = pycurl.Curl()
         curl.setopt(curl.URL, url)
-        curl.setopt(curl.WRITEFUNCTION, self.body_callback)
+        curl.setopt(curl.WRITEFUNCTION, self._body_callback)
         curl.perform()
         curl.close()
         p = self.buf
         self.buf = ""
-        print p
         return p
     
-    def upload_progress(self, download_t, download_d, upload_t, upload_d):
+    def _upload_progress(self, download_t, download_d, upload_t, upload_d):
         # this is only for upload progress bar
 	if upload_t == 0:
             return 0
@@ -111,6 +127,9 @@ class CurlyRequest:
         return 0
         
     def do_post_call(self, url, args, use_progress=False):
+        """
+        Send a simple POST request
+        """
         c = pycurl.Curl()
         c.setopt(c.POST, 1)
         c.setopt(c.URL, url)
@@ -122,7 +141,7 @@ class CurlyRequest:
         c.setopt(c.NOPROGRESS, 0)
         
         if use_progress:
-            c.setopt(c.PROGRESSFUNCTION, self.upload_progress)
+            c.setopt(c.PROGRESSFUNCTION, self._upload_progress)
 
         c.perform()
         c.close()
@@ -131,6 +150,9 @@ class CurlyRequest:
         return res
 
 class SimpleOAuthClient(oauth.OAuthClient):
+    """
+    Class used for handling authenticated call to the API.
+    """
 
     def __init__(self, key, secret,
                  server="vimeo.com", port=PORT, 
@@ -139,6 +161,14 @@ class SimpleOAuthClient(oauth.OAuthClient):
                  authorization_url=AUTHORIZATION_URL,
                  token=None,
                  token_secret=None):
+        """
+        You need to give both key (consumer key) and secret (consumer secret).
+        If you already have an access token (token+secret), you can use it
+        by giving it through token and token_secret parameters.
+        If not, then you need to call both get_request_token(), get_authorize_token_url() and 
+        finally get_access_token().
+        """
+
         self.curly = CurlyRequest()
         self.key = key
         self.secret = secret
@@ -155,44 +185,161 @@ class SimpleOAuthClient(oauth.OAuthClient):
             self.token = None
         
     def get_request_token(self):
-        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, 
-                                                                   http_url=self.request_token_url)
+        """
+        Requests a request token and return it on success.
+        """
+        oauth_request = oauth.OAuthToken.from_consumer_and_token(self.consumer, 
+                                                                 http_url=self.request_token_url)
         oauth_request.sign_request(HMAC_SHA1, self.consumer, None)
-        self.token = self.fetch_token(oauth_request)
+        self.token = self._fetch_token(oauth_request)
 
 
     def get_authorize_token_url(self):
-        # -> typically just some okay response
-        oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token, http_url=self.authorization_url)
+        """
+        Returns a URL used to verify and authorize the application to access
+        user's account. The pointed page should contain a simple 'password' that
+        acts as the 'verifier' in oauth.
+        """
+
+        oauth_request = oauth.OAuthToken.from_token_and_callback(token=self.token, 
+                                                                 http_url=self.authorization_url)
         return oauth_request.to_url()
-##        return self.curly.do_request(oauth_request.to_url())
 
 
     def get_access_token(self, verifier):
-        self.token.set_verifier(verifier)
-        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, 
-                                                                   token=self.token, 
-                                                                   verifier=verifier, 
-                                                                   http_url=self.access_token_url)
-        oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
-        self.token = self.fetch_token(oauth_request)
+        """
+        Should be called after having received the 'verifier' from the authorization page.
+        See 'get_authorize_token_url()' method.
+        """
 
-    def fetch_token(self, oauth_request):
+        self.token.set_verifier(verifier)
+        oauth_request = oauth.OAuthToken.from_consumer_and_token(self.consumer, 
+                                                                 token=self.token, 
+                                                                 verifier=verifier, 
+                                                                 http_url=self.access_token_url)
+        oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
+        self.token = self._fetch_token(oauth_request)
+
+    def _fetch_token(self, oauth_request):
+        """
+        Sends a requests and interprets the result as a token string.
+        """
         ans = self.curly.do_request(oauth_request.to_url())
         return oauth.OAuthToken.from_string(ans)
 
     def vimeo_oauth_checkAccessToken(self, auth_token):
         pass
 
-    def vimeo_videos_upload_getQuota(self):
-        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
-                                                                   token=self.token,
-                                                                   http_method='GET',
-                                                                   http_url=API_REST_URL,
-                                                                   parameters={'method': "vimeo.videos.upload.getQuota"})
+
+    def _do_vimeo_signed_call(self, method, parameter={}):
+        """
+        Wrapper to send an authenticated call to vimeo. You first need to have
+        an access token.
+        """
+
+        parameters['method'] = method
+        oauth_request = oauth.OAuthToken.from_consumer_and_token(self.consumer,
+                                                                 token=self.token,
+                                                                 http_method='GET',
+                                                                 http_url=API_REST_URL,
+                                                                 parameters=parameters)
         oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
-        self.curly.do_rest_call(oauth_request.to_url())
+        return self.curly.do_rest_call(oauth_request.to_url())
+        
+
+###
+### Album section
+###
+
+
+###
+### Channel section
+###
+
+
+###
+### Contacts section
+###
+
+
+###
+### Groups section
+###
+
+###
+### Groups Events section
+###
+
+###
+### Groups forums section
+###
+
+###
+### OAuth section
+###
+
+###
+### People section
+###
+
+###
+### Test section
+###
+    def vimeo_test_echo(self, params={}):
+        """
+        This will just repeat back any parameters that you send. 
+        No auth required
+        """
+        pass
+
+    def vimeo_test_login(self):
+        """
+        Is the user logged in? 
+        """
+        pass
+
+    def vimeo_test_null(self):
+        """
+        This is just a simple null/ping test.
+
+        You can use this method to make sure that you are properly
+        contacting to the Vimeo API.
+        """
+        pass
+
+###
+### Videos section
+###
+
+###
+### Videos comments section
+###
+
+###
+### Videos embed section
+###
+
+
+###
+### Videos Upload section
+###
+
+    def vimeo_videos_upload_getQuota(self):
+        """
+        (from vimeo API documentation)
+        Get the space and number of HD uploads left for a user.
+
+        Numbers are provided in bytes. It's a good idea to check this
+        method before you upload a video to let the user know if their
+        video will be converted to HD. hd_quota will have a value of 0
+        if the user reached the max number of uploads, 1
+        otherwise. Resets is the number of the day of the week,
+        starting with Sunday.
+        """
+        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'))
     
+
+
 
 def _simple_request(url, format):
     if format != 'xml':
