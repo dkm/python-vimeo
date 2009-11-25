@@ -231,14 +231,14 @@ class SimpleOAuthClient(oauth.OAuthClient):
         pass
 
 
-    def _do_vimeo_signed_call(self, method, parameter={}):
+    def _do_vimeo_signed_call(self, method, parameters={}):
         """
         Wrapper to send an authenticated call to vimeo. You first need to have
         an access token.
         """
 
         parameters['method'] = method
-        oauth_request = oauth.OAuthToken.from_consumer_and_token(self.consumer,
+        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
                                                                  token=self.token,
                                                                  http_method='GET',
                                                                  http_url=API_REST_URL,
@@ -246,15 +246,59 @@ class SimpleOAuthClient(oauth.OAuthClient):
         oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
         return self.curly.do_rest_call(oauth_request.to_url())
         
+    def _do_vimeo_unsigned_call(self, method, parameters={}):
+        """
+        Wrapper to send an unauthenticated call to vimeo. You don't need to have
+        an access token.
+        """
+        parameters['method'] = method
+        url = API_REST_URL + '/' + urllib.urlencode(parameters)
+        print url
+        ##self.curly.do_rest_call(url)
 
 ###
 ### Album section
 ###
+    def  vimeo_albums_getAll(self, user_id, sort=None,
+                             per_page=None,
+                             page=None):
+        """
+        Get a list of a user's albums.
+        This method does not require authentication. 
+        """
+        params = {'user_id': user_id}
+        if sort in ('newest', 'oldest', 'alphabetical'):
+            params['sort'] = sort
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
 
+        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'),
+                                          parameters=params)
 
 ###
 ### Channel section
 ###
+    def vimeo_channels_getAll(self, sort=None,
+                              per_page=None,
+                              page=None):
+        """
+        Get a list of all public channels. 
+        This method does not require authentication. 
+        """
+        params = {}
+        if sort in ('newest', 'oldest', 'alphabetical', 
+                    'most_videos', 'most_subscribed', 
+                    'most_recently_updated'):
+            params['sort'] = sort
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'),
+                                          parameters=params)
 
 
 ###
@@ -290,13 +334,19 @@ class SimpleOAuthClient(oauth.OAuthClient):
         This will just repeat back any parameters that you send. 
         No auth required
         """
-        pass
+        ## for simplicity, I'm using a signed call, but it's
+        ## useless. Tokens & stuff will simply get echoed as the
+        ## others parameters are.
+        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'),
+                                          parameters=params)
+
 
     def vimeo_test_login(self):
         """
         Is the user logged in? 
         """
-        pass
+        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'))
+
 
     def vimeo_test_null(self):
         """
@@ -305,7 +355,8 @@ class SimpleOAuthClient(oauth.OAuthClient):
         You can use this method to make sure that you are properly
         contacting to the Vimeo API.
         """
-        pass
+        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'))
+
 
 ###
 ### Videos section

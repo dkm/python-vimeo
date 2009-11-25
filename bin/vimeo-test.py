@@ -56,6 +56,12 @@ def main(argv):
                                    token_secret=options.access_token_secret)
 
     client.vimeo_videos_upload_getQuota()
+    client.vimeo_test_null()
+    client.vimeo_test_login()
+    client.vimeo_test_echo({'tata':'prout', 'prout':'caca'})
+    client.vimeo_albums_getAll('1443699')
+    client.vimeo_channels_getAll()
+
     # oauth_request = oauth.OAuthRequest.from_token_and_callback(token=token, 
     #                                                            http_url=client.authorization_url)
     # response = client.authorize_token(oauth_request)
