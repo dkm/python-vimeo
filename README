@@ -3,6 +3,9 @@ This a python module for using Vimeo's API.
 This is a complete rewrite of the previous version. Support
 for v2 API is underway. Currently, do not expect anything.
 
+For debugging purprose, I heavily rely on hurl (http://hurl.it/).
+The author of this website is also the author of the python module for oauth used here.
+
 INSTALL
 -------
 
@@ -14,27 +17,8 @@ You can also create debian package:
 
  $ dpkg-buildpackage
 
-And you can even use prebuilt packages for ubuntu, available on my ppa:
-  https://launchpad.net/~marc-poulhies/+archive/ppa
-
-Currently, I only built the packages for the Jaunty version. Simply
-add the following lines in /etc/apt/sources.list or in a separate file
-in /etc/apt/sources.list.d:
-
-,----
-| deb http://ppa.launchpad.net/marc-poulhies/ppa/ubuntu jaunty main 
-| deb-src http://ppa.launchpad.net/marc-poulhies/ppa/ubuntu jaunty main 
-`----
 
 USAGE
 -----
 
-The vimeo-upload.py script is an example of how to use the python API
-to upload a single video.
-
-This is a sample use of the script:
-
- $ vimeo-upload.py -k API_KEY -s API_SECRET -t AUTH_TOKEN  -f toto.avi -n "toto"
-
-Known bugs:
- - can't use space inside title or tags. I should look into it.
+Not yet !
