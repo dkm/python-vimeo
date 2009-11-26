@@ -264,6 +264,47 @@ class SimpleOAuthClient(oauth.OAuthClient):
 ###
 ### Album section
 ###
+    ## untested
+    def vimeo_albums_addVideo(self, album_id, video_id):
+        """
+        Add a video to an album. 
+
+        This method returns an empty success response.
+        """
+        params = {'album_id': album_id,
+                  'video_id': video_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    ## untested
+    def vimeo_albums_create(self, title, video_id, 
+                            description=None, videos=[]):
+        """
+        Create an album. 
+
+        Returns album id
+        """
+        params = {'title': title,
+                  'video_id': video_id}
+        if description != None:
+            params['description'] = description
+        if videos != []:
+            params['videos'] = ','.join(videos)
+
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
+
+    ## untested
+    def vimeo_albums_delete(self, album_id):
+        """
+        Permanently delete an album. 
+
+        This method returns an empty success response.
+        """
+        params = {'album_id': album_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
+        
     def  vimeo_albums_getAll(self, user_id, sort=None,
                              per_page=None,
                              page=None):
@@ -281,7 +322,80 @@ class SimpleOAuthClient(oauth.OAuthClient):
 
         return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                    parameters=params)
+    ## untested
+    def vimeo_albums_getVideos(self, album_id, full_response=None,
+                               page=None, password=None, per_page=None):
+        """
+        Get a list of the videos in an album.
+        """
 
+        params = {'album_id' : album_id}
+        if full_response != None:
+            params['full_response'] = full_response
+        if page != None:
+            params['page'] = page
+        if password != None:
+            params['password'] = password
+        if per_page != None:
+            params['per_page'] = per_page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+    ## untested
+    def vimeo_albums_removeVideo(self, album_id, video_id=None):
+        """
+        Remove a video from an album.
+
+        This method returns an empty success response.
+        """
+        params = {'album_id' : album_id}
+        if video_id != None:
+            params['video_id'] = video_id
+
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
+
+    ## untested
+    def vimeo_albums_setDescription(self, album_id, description):
+        """
+        Set the description for an album, overwriting the previous
+        description.
+        
+        This method returns an empty success response.
+        """
+        params = {'album_id': album_id,
+                  'description': description}
+
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
+
+    ## untested
+    def vimeo_albums_setPassword(self, album_id, password):
+        """
+        Set or clear the password for an album.
+
+        This method returns an empty success response.
+        """
+        params = {'album_id': album_id,
+                  'password': password}
+
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
+
+    ## untested
+    def vimeo_albums_setTitle(self, album_id, title):
+        """
+        Set the title of an album, overwriting the previous title.
+        
+        This method returns an empty success response.
+        """
+        params = {'album_id': album_id,
+                  'title': title}
+
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
+
+        
 ###
 ### Channel section
 ###
@@ -366,6 +480,7 @@ class SimpleOAuthClient(oauth.OAuthClient):
 ###
 ### Videos section
 ###
+
 
 ###
 ### Videos comments section
