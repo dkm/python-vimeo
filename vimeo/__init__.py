@@ -37,6 +37,8 @@ AUTHORIZATION_URL = 'http://vimeo.com/oauth/authorize'
 API_REST_URL = 'http://vimeo.com/api/rest/v2/'
 API_V2_CALL_URL = 'http://vimeo.com/api/v2/'
 
+USER_AGENT = 'python-vimeo http://github.com/dkm/python-vimeo'
+
 PORT=80
 
 HMAC_SHA1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
@@ -101,6 +103,7 @@ class CurlyRequest:
         """
         self.buf = ""
         curl = pycurl.Curl()
+        curl.setopt(pycurl.USERAGENT, USER_AGENT)
         curl.setopt(curl.URL, url)
         curl.setopt(curl.WRITEFUNCTION, self._body_callback)
         curl.perform()
@@ -231,7 +234,7 @@ class SimpleOAuthClient(oauth.OAuthClient):
         pass
 
 
-    def _do_vimeo_signed_call(self, method, parameters={}):
+    def _do_vimeo_authenticated_call(self, method, parameters={}):
         """
         Wrapper to send an authenticated call to vimeo. You first need to have
         an access token.
@@ -246,16 +249,18 @@ class SimpleOAuthClient(oauth.OAuthClient):
         oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
         return self.curly.do_rest_call(oauth_request.to_url())
         
-    def _do_vimeo_unsigned_call(self, method, parameters={}):
+    def _do_vimeo_unauthenticated_call(self, method, parameters={}):
         """
         Wrapper to send an unauthenticated call to vimeo. You don't need to have
         an access token.
         """
         parameters['method'] = method
-        url = API_REST_URL + '/' + urllib.urlencode(parameters)
-        print url
-        ##self.curly.do_rest_call(url)
-
+        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                 http_method='GET',
+                                                                 http_url=API_REST_URL,
+                                                                 parameters=parameters)
+        oauth_request.sign_request(HMAC_SHA1, self.consumer, None)
+        return self.curly.do_rest_call(oauth_request.to_url())
 ###
 ### Album section
 ###
@@ -274,8 +279,8 @@ class SimpleOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'),
-                                          parameters=params)
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
 
 ###
 ### Channel section
@@ -297,8 +302,8 @@ class SimpleOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'),
-                                          parameters=params)
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
 
 
 ###
@@ -337,15 +342,15 @@ class SimpleOAuthClient(oauth.OAuthClient):
         ## for simplicity, I'm using a signed call, but it's
         ## useless. Tokens & stuff will simply get echoed as the
         ## others parameters are.
-        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'),
-                                          parameters=params)
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
 
 
     def vimeo_test_login(self):
         """
         Is the user logged in? 
         """
-        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'))
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'))
 
 
     def vimeo_test_null(self):
@@ -355,7 +360,7 @@ class SimpleOAuthClient(oauth.OAuthClient):
         You can use this method to make sure that you are properly
         contacting to the Vimeo API.
         """
-        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'))
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'))
 
 
 ###
@@ -387,7 +392,7 @@ class SimpleOAuthClient(oauth.OAuthClient):
         otherwise. Resets is the number of the day of the week,
         starting with Sunday.
         """
-        return self._do_vimeo_signed_call(inspect.stack()[0][3].replace('_', '.'))
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'))
     
 
 
