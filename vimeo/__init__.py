@@ -400,138 +400,113 @@ class SimpleOAuthClient(oauth.OAuthClient):
 ### Channel section
 ###
 
+    ## untested
+    def vimeo_channels_addVideo(self, channel_id, video_id):
+        """
+        Add a video to a channel.
 
-# vimeo.channels.addVideo
-# Add a video to a channel.	
+        You can only add a video to a channel if you're the moderator
+        of that channel.  
 
-# You can only add a video to a channel if you're the moderator of that channel.
-# Authentication
+        This method returns an empty success response.
+        """
+        params = {'channel_id': channel_id,
+                  'video_id': video_id}
 
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# channel_id (required)
-# The numeric id of the channel or its url name.
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (required)
-# The ID of the video.
-# Example Responses
-
-# This method returns an empty success response.
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
 
 
-# vimeo.channels.getInfo
-# Get the information on a single channel.
-# Authentication
+    def vimeo_channels_getInfo(self, channel_id):
+        """
+        Get the information on a single channel.
+        """
+        params = {'channel_id': channel_id}
 
-# This method does not require authentication.
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params) 
 
-# API Parameters
+        
+    def vimeo_channels_getModerators(self, channel_id, page=None, per_page=None):
+        """
+        Get a list of the channel's moderators.
+        """
+        params = {'channel_id': channel_id}
+        if page != None:
+            params = {'page': page}
+        if per_page != None:
+            params = {'per_page': per_page}
 
-# channel_id (required)
-# The numeric id of the channel or its url name.
-
-
-# vimeo.channels.getModerators
-# Get a list of the channel's moderators.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# channel_id (required)
-# The numeric id of the channel or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-
-# vimeo.channels.getSubscribers
-# Get a list of the channel's subscribers.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# channel_id (required)
-# The numeric id of the channel or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-
-# vimeo.channels.getVideos
-# Get a list of the videos in a channel.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# channel_id (required)
-# The numeric id of the channel or its url name.
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params) 
 
 
-# vimeo.channels.removeVideo
-# Remove a video from a channel.
-# Authentication
 
-# This method requires authentication with write permission.
+    def vimeo_channels_getSubscribers(self, channel_id, page=None, per_page=None):
+        """
+        Get a list of the channel's subscribers.
+        """
+        params = {'channel_id': channel_id}
+        if page != None:
+            params = {'page': page}
+        if per_page != None:
+            params = {'per_page': per_page}
 
-# API Parameters
-
-# channel_id (optional)
-# The numeric id of the channel or its url name.
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (optional)
-# The ID of the video.
-# Example Responses
-
-# This method returns an empty success response.
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params) 
 
 
-# vimeo.channels.subscribe
-# Subscribe a user to a channel.
-# Authentication
+    def vimeo_channels_getVideos(self, channel_id, full_response=None,
+                                 page=None, per_page=None):
+        """
+        Get a list of the videos in a channel.
+        """
+        params = {'channel_id': channel_id}
+        if page != None:
+            params = {'page': page}
+        if per_page != None:
+            params = {'per_page': per_page}
+        if full_response != None:
+            params = {'full_response': full_response}
 
-# This method requires authentication with write permission.
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params) 
 
-# API Parameters
+    def vimeo_channels_removeVideo(self, channel_id, video_id=None):
+        """
+        Remove a video from a channel.
+        
+        This method returns an empty success response.
+        """
+        params = {'channel_id': channel_id}
+        if video_id != None:
+            params['video_id'] = video_id
 
-# channel_id (optional)
-# The numeric id of the channel or its url name.
-# oauth_token (required)
-# The access token for the acting user.
-# Example Responses
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
 
-# This method returns an empty success response.
 
-# vimeo.channels.unsubscribe
-# Unsubscribe a user from a channel.
-# Authentication
+    ## channel_id is optional in doc ?!
+    def vimeo_channels_subscribe(self, channel_id):
+        """
+        Subscribe a user to a channel.
 
-# This method requires authentication with write permission.
+        This method returns an empty success response.
+        """
+        params = {'channel_id': channel_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
+        
+    ## channel_id optional in doc ?!
+    def vimeo_channels_unsubscribe(self, channel_id):
+        """
+        Unsubscribe a user from a channel.
 
-# API Parameters
-
-# channel_id (optional)
-# The numeric id of the channel or its url name.
-# oauth_token (required)
-# The access token for the acting user.
-# Example Responses
-
-# This method returns an empty success response.
+        This method returns an empty success response.
+        """
+        params = {'channel_id': channel_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params) 
 
 
     def vimeo_channels_getAll(self, sort=None,
@@ -559,287 +534,271 @@ class SimpleOAuthClient(oauth.OAuthClient):
 ### Contacts section
 ###
 
-# vimeo.contacts.getAll
-# Get a list of contacts for a specified user.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, alphabetical, or most_credited.
-# user_id (required)
-# The ID number or username of the user. A token may be used instead.
-
-# vimeo.contacts.getMutual
-# Get a list of the mutual contacts of a specific user.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-# user_id (required)
-# The user. Can either be ID number or username. A token can also be used instead of this parameter.
-
-
-# vimeo.contacts.getOnline
-# Get a list of the user's contacts who are currently online.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of online contacts to show on each page. Max 50.
-
-
-# vimeo.contacts.getWhoAdded
-# Get a list of the users who have added a specific user as a contact.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, alphabetical, or most_credited.
-# user_id (required)
-# The user. Can either be ID number or username. A token can also be used instead of this parameter.
-
-
-# vimeo.groups.addVideo
-# Add a video to a group.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# group_id (required)
-# The group to add the video to. The user must be joined to the group. This can be either the ID of the group, or the name in the URL.
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (required)
-# The ID of the video to add to the group.
-# Example Responses
-
-# This method returns an empty success response.
-
-
-# vimeo.groups.getAll
-# Get a list of all public groups.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of groups to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, alphabetical, most_videos, most_subscribed, or most_recently_updated.
-
-
-# vimeo.groups.getFiles
-# Get a list of files uploaded to a group.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-
-
-# vimeo.groups.getInfo
-# Get information for a specific group.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-
-
-# vimeo.groups.getMembers
-# Get a list of the members of a group.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, or alphabetical.
-
-# vimeo.groups.getModerators
-# Get a list of the group's moderators.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-
-# vimeo.groups.getVideoComments
-# Get a list of the comments on a video in a group.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of comments to show on each page. Max 50.
-# video_id (required)
-# The ID of the video.
-
-# vimeo.groups.getVideos
-# Get a list of the videos added to a group.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, featured, most_played, most_commented, most_liked, or random.
-
-
-# vimeo.groups.join
-# Join a group.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# group_id (optional)
-# The numeric id of the group or its url name.
-# oauth_token (required)
-# The access token for the acting user.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.groups.leave
-# Leave a group.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# group_id (optional)
-# The numeric id of the group or its url name.
-# oauth_token (required)
-# The access token for the acting user.
-# Example Responses
-
-# This method returns an empty success response.
-
-
-# vimeo.groups.events.getMonth
-# Get events from a group in a specific month.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# month (optional)
-# The month to get events from. Defaults to the current month.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of events to show on each page. Max 50.
-# year (optional)
-# The year to get events from. Defaults to the current year.
-
-
-# vimeo.groups.events.getPast
-# Get all past events from a group.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of events to show on each page. Max 50.
-
-
-# vimeo.groups.events.getUpcoming
-# Get all upcoming events from a group.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of events to show on each page. Max 50.
-
+    def vimeo_contacts_getAll(self, user_id,
+                              page=None, per_page=None,
+                              sort=None):
+        """
+        Get a list of contacts for a specified user.
+        """
+        params = {'user_id': user_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+
+    def vimeo_contacts_getMutual(self, user_id,
+                                 page=None, per_page=None):
+        """
+        Get a list of the mutual contacts of a specific user.
+        """
+
+        params = {'user_id': user_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    def  vimeo_contacts_getOnline(self, page=None, per_page=None):
+        """
+        Get a list of the user's contacts who are currently online.
+        """
+        params={}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    def  vimeo_contacts_getWhoAdded(self, user_id,
+                                    page=None, per_page=None,
+                                    sort=None):
+        """
+        Get a list of the users who have added a specific user as a
+        contact.
+        """
+        params={'user_id':user_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+        
+    def vimeo_groups_addVideo(self, group_id, video_id):
+        """
+        Add a video to a group.
+
+        This method returns an empty success response.
+        """
+
+        params={'group_id':group_id,
+                'video_id': video_id}
+
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+
+    def vimeo_groups_getAll(self, page=None, per_page=None, sort=None):
+        """
+        Get a list of all public groups.
+        """
+        # Method to sort by: newest, oldest, alphabetical, most_videos,
+        # most_subscribed, or most_recently_updated.
+
+        params = {}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+        
+
+    def vimeo_groups_getFiles(self, group_id, page=None, per_page=None):
+        """
+        Get a list of files uploaded to a group.
+        """
+        params = {'group_id':group_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+
+    def vimeo_groups_getInfo(self, group_id):
+        """
+        Get information for a specific group.
+        """
+        params = {'group_id':group_id}
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    def vimeo_groups_getMembers(self, group_id, page=None, per_page=None,
+                                sort=None):
+        """
+        Get a list of the members of a group.
+        """
+
+        # Method to sort by: newest, oldest, or alphabetical.
+        params = {'group_id':group_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+
+    def vimeo_groups_getModerators(self, group_id, page=None, per_page=None):
+        """
+        Get a list of the group's moderators.
+        """
+        params = {'group_id':group_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+    
+    def  vimeo_groups_getVideoComments(self, group_id, video_id,
+                                       page=None, per_page=None):
+        """
+        Get a list of the comments on a video in a group.
+        """
+        params = {'group_id':group_id}
+        params = {'video_id':video_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+
+    def vimeo_groups_getVideos(self, group_id, full_response=None,
+                               page=None, per_page=None, sort=None):
+        """
+        Get a list of the videos added to a group.
+        """
+        # Method to sort by: newest, oldest, featured,
+        # most_played, most_commented, most_liked, or random.
+
+        params = {'group_id':group_id}
+
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    ## group_id optional in doc ?!
+    def vimeo_groups_join(self, group_id):
+        """
+        Join a group.
+
+        This method returns an empty success response.
+        """
+        params = {'group_id':group_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    ## group_id optional in doc ?!
+    def vimeo_groups_leave(self, group_id):
+        """
+        Leave a group.
+
+        This method returns an empty success response.
+        """
+        params = {'group_id':group_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    def vimeo_groups_events_getMonth(self, group_id, month=None, year=None,
+                                     page=None, per_page=None):
+        """
+        Get events from a group in a specific month.
+        """
+        params = {'group_id':group_id}
+
+        if month != None:
+            params['month'] = month
+        if year != None:
+            params['year'] = year
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    def vimeo_groups_events_getPast(self, group_id, page=None, per_page=None):
+        """
+        Get all past events from a group.
+        """
+        params = {'group_id':group_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    def vimeo_groups_events_getUpcoming(self, group_id,
+                                        page=None, per_page=None):
+        """
+        Get all upcoming events from a group.
+        """
+        params = {'group_id':group_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
 
 # vimeo.groups.forums.getTopicComments
 # Get a list of comments in a group forum topic.
