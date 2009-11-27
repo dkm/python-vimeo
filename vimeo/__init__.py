@@ -800,522 +800,580 @@ class SimpleOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                    parameters=params)
 
-# vimeo.groups.forums.getTopicComments
-# Get a list of comments in a group forum topic.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of comments to show on each page. Max 50.
-# topic_id (required)
-# The group forum topic ID.
-
-# vimeo.groups.forums.getTopics
-# Get a list of topics in a group forum.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# group_id (required)
-# The numeric id of the group or its url name.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-
-# vimeo.oauth.checkAccessToken
-# Return the credentials attached to an Access Token.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the user.
-
-# vimeo.oauth.convertAuthToken
-# Convert an old auth token to an OAuth Access Token.	
-
-# After you call this method the old auth token will no longer be valid.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# auth_token (required)
-# The old auth token
-
-# vimeo.videos.addCast
-# Add a specified user as a cast member to the video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# role (optional)
-# The role of the user in the video.
-# user_id (required)
-# The user to add as a cast member.
-# video_id (required)
-# The video to add the cast member to.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.addPhotos
-# Add Flickr photos to a video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# photo_urls (required)
-# A comma-separated list of Flickr photo urls.
-# video_id (required)
-# The video to add photos to.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.addTags
-# Add tags to a video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# tags (required)
-# A comma-separated list of tags to add to the video.
-# video_id (required)
-# The video to add tags to.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.clearTags
-# Remove all of the tags from a video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (required)
-# The video to remove the tags from.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.delete
-# Permanently delete a video.
-# Authentication
-
-# This method requires authentication with delete permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (required)
-# The video to permanently delete.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.getAll
-# Get all videos credited to a user (both uploaded and appears).
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
-# user_id (required)
-# The ID number or username of the user. A token may be used instead.
-
-
-# vimeo.videos.getAppearsIn
-# Get a list of videos that a user appears in.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
-# user_id (required)
-# The ID number or username of the user. A token may be used instead.
-
-
-# vimeo.videos.getByTag
-# Get a list of videos that have the specified tag.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, most_played, most_commented, most_liked, or relevant.
-# tag (required)
-# The tag.
-
-# vimeo.videos.getCast
-# Get the cast members of a video.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of users to show on each page. Max 50.
-# video_id (required)
-# The ID of the video.
-
-# vimeo.videos.getContactsLiked
-# Get a list of the videos liked by the user's contacts.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
-# user_id (required)
-# The ID number or username of the user. A token may be used instead.
-
-# vimeo.videos.getContactsUploaded
-# Get a list of the videos uploaded by the user's contacts.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
-# user_id (required)
-# The ID number or username of the user. A token may be used instead.
-
-# vimeo.videos.getInfo
-# Get lots of information on a video.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# video_id (required)
-# The ID of the video.
-
-# vimeo.videos.getLikes
-# Get a list of videos that the user likes.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
-# user_id (required)
-# The ID number or username of the user. A token may be used instead.
-
-# vimeo.videos.getSourceFileUrls
-# Get a list of the source files for a video.	
-
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# video_id (required)
-# The ID of the video.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.getSubscriptions
-# Get a list of the subscribed videos for a user.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
-# user_id (required)
-# The ID number or username of the user. A token may be used instead.
-
-# vimeo.videos.getThumbnailUrls
-# Get the URLs of a video's thumbnails.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# video_id (required)
-# The ID of the video.
-
-# vimeo.videos.getUploaded
-# Get a list of videos uploaded by a user.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# sort (optional)
-# Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
-# user_id (required)
-# The ID number or username of the user. A token may be used instead.
-
-# vimeo.videos.removeCast
-# Remove a cast member from a video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# user_id (required)
-# The user to remove from the cast.
-# video_id (required)
-# The video to remove the cast member from.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.removeTag
-# Remove a tag from a video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# tag_id (required)
-# The ID of the tag to remove from the video.
-# video_id (required)
-# The video to remove the tag from.
-# Example Responses
-
-# This method returns an empty success response.
-
-
-# vimeo.videos.search
-# Search for videos.
-# Authentication
-
-# This method does not require authentication.
-
-# API Parameters
-
-# full_response (optional)
-# Set this parameter to get back the full video information.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of videos to show on each page. Max 50.
-# query (required)
-# The search terms
-# sort (optional)
-# Method to sort by: relevant, newest, oldest, most_played, most_commented, or most_liked.
-# user_id (optional)
-# The ID number or username of the user.
-
-# vimeo.videos.setDescription
-# Set the description for a video, overwriting the previous description.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# description (required)
-# The new description (can be blank).
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (required)
-# The ID of the video.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.setLike
-# Set whether or not the user likes a video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# like (required)
-# If this is true, we will record that the user likes this video. If false, we will remove it from their liked videos.
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (required)
-# The ID of the video to like.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.setPrivacy
-# Set the privacy of a video. The possible privacy settings are anybody, nobody, contacts, users, password, or disable.
-# anybody - anybody can view the video
-# nobody - only the owner can view the video
-# contacts - only the owner's contacts can view the video
-# users - only specific users can view the video
-# password - the video will require a password
-# disable  - the video will not appear on Vimeo.com at all
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# password (optional)
-# The password to protect the video with.
-# privacy (required)
-# The privacy setting to use.
-# users (optional)
-# A comma-separated list of users who can view the video.
-# video_id (required)
-# The ID of the video.
-
-# vimeo.videos.setTitle
-# Sets the title of a video, overwriting the previous title.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# title (required)
-# The new title. If left blank, title will be set to "Untitled".
-# video_id (required)
-# The ID of the video.
-
-# vimeo.videos.comments.addComment
-# Add a comment to a video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# comment_text (required)
-# The text of the comment.
-# oauth_token (required)
-# The access token for the acting user.
-# reply_to_comment_id (optional)
-# If this is a reply to another comment, include that comment's ID.
-# video_id (required)
-# The video to comment on.
-
-
-# vimeo.videos.comments.deleteComment
-# Delete a specific comment from a video.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# comment_id (required)
-# The ID of the comment to delete.
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (required)
-# The video that has the comment.
+    def vimeo_groups_forums_getTopicComments(self, group_id, topic_id,
+                                             page=None, per_page=None):
+        """
+        Get a list of topics in a group forum.
+        """
+        params = {'group_id':group_id,
+                  'topic_id':topic_id}
+
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    ## this method does not need auth, but must include the token
+    ## making an auth call should do the trick...
+    def vimeo_oauth_checkAccessToken(self):
+        """
+        Return the credentials attached to an Access Token.
+        """
+        params={}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+        
+    ## this method does not need auth, but must include the token
+    ## making an auth call should do the trick...
+    ## I'm not sure this is correct
+    def vimeo_oauth_convertAuthToken(self):
+        """
+        Convert an old auth token to an OAuth Access Token.  
+
+        After you call this method the old auth token will no longer
+        be valid.
+        """
+        params={}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+
+    def vimeo_videos_addCast(self, user_id, video_id, role=None):
+        """
+        Add a specified user as a cast member to the video.
+
+        This method returns an empty success response. 
+        """
+        params={'user_id':user_id,
+                'video_id':video_id}
+
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+    # oauth_token (required)
+    # The access token for the acting user.
+    # photo_urls (required)
+    # A comma-separated list of Flickr photo urls.
+    # video_id (required)
+    # The video to add photos to.
+    # Example Responses
+    def  vimeo_videos_addPhotos(self, photos_urls, video_id):
+        """
+        Add Flickr photos to a video.
+
+        This method returns an empty success response.
+        """
+        params={'photos_urls':photos_urls,
+                'video_id':video_id}
+
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+
+    # oauth_token (required)
+    # The access token for the acting user.
+    # tags (required)
+    # A comma-separated list of tags to add to the video.
+    # video_id (required)
+    # The video to add tags to.
+    def  vimeo_videos_addTags(self, tags, video_id):
+        """
+        Add tags to a video.
+
+        This method returns an empty success response.
+        """
+        params={'tags':tags,
+                'video_id':video_id}
+        
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # video_id (required)
+    # The video to remove the tags from.
+    # Example Responses
+    def vimeo_videos_clearTags(self, video_id):
+        """
+        Remove all of the tags from a video.
+
+        This method returns an empty success response.
+        """
+        params={'video_id':video_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # video_id (required)
+    # The video to permanently delete.
+    def vimeo_videos_delete(self, video_id):
+        """
+        Permanently delete a video.
+
+        This method returns an empty success response.
+        """
+        params={'video_id':video_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # sort (optional)
+    # Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
+    # user_id (required)
+    # The ID number or username of the user. A token may be used instead.
+    def vimeo_videos_getAll(self, user_id,
+                            full_response=None, page=None,
+                            per_page=None, sort=None):
+        """
+        Get all videos credited to a user (both uploaded and appears).
+        """
+        params={'user_id':user_id}
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # sort (optional)
+    # Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
+    # user_id (required)
+    # The ID number or username of the user. A token may be used instead.
+    def vimeo_videos_getAppearsIn(self, user_id,
+                            full_response=None, page=None,
+                            per_page=None, sort=None):
+        """
+        Get a list of videos that a user appears in.
+        """
+        params={'user_id':user_id}
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # sort (optional)
+    # Method to sort by: newest, oldest, most_played, most_commented, most_liked, or relevant.
+    # tag (required)
+    # The tag.
+    def vimeo_videos_getByTag(self, tag, 
+                            full_response=None, page=None,
+                            per_page=None, sort=None):
+        """
+        Get a list of videos that have the specified tag.
+        """
+        params={'tag':tag}
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of users to show on each page. Max 50.
+    # video_id (required)
+    # The ID of the video.
+    def vimeo_videos_getCast(self, video_id,
+                             page=None, per_page=None):
+        """
+        Get the cast members of a video.
+        """
+        params={'video_id':video_id}
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # sort (optional)
+    # Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
+    # user_id (required)
+    # The ID number or username of the user. A token may be used instead.
+    def vimeo_videos_getContactsLiked(self, user_id,
+                                      full_response=None, page=None,
+                                      per_page=None, sort=None):
+        """
+        Get a list of the videos liked by the user's contacts.
+        """
+        params={'user_id':user_id}
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = page
+
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # sort (optional)
+    # Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
+    # user_id (required)
+    # The ID number or username of the user. A token may be used instead.
+    def vimeo_videos_getContactsUploaded(self, user_id, 
+                                         full_response=None, page=None,
+                                         per_page=None, sort=None):
+        """
+        Get a list of the videos uploaded by the user's contacts.
+        """
+        params={'user_id':user_id}
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # video_id (required)
+    # The ID of the video.
+    def vimeo_videos_getInfo(self, video_id):
+        """
+        Get lots of information on a video.
+        """
+        params={'video_id':video_id}
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+        
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # sort (optional)
+    # Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
+    # user_id (required)
+    # The ID number or username of the user. A token may be used instead.
+    def vimeo_videos_getLikes(self, user_id,
+                              full_response=None, page=None,
+                              per_page=None, sort=None):
+        """
+        Get a list of videos that the user likes.
+        """
+        params={'user_id':user_id}
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # video_id (required)
+    # The ID of the video.
+    # return empty array?!
+    def vimeo_videos_getSourceFileUrls(self, video_id):
+        """
+        Get a list of the source files for a video.
+
+        This method returns an empty success response.
+        """
+        params={'user_id':user_id}
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # sort (optional)
+    # Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
+    # user_id (required)
+    # The ID number or username of the user. A token may be used instead.
+    def vimeo_videos_getSubscriptions(self, user_id,
+                                      full_response=None, page=None,
+                                      per_page=None, sort=None):
+        """                                      
+        Get a list of the subscribed videos for a user.
+        """
+        params={'user_id':user_id}
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # video_id (required)
+    # The ID of the video.
+    def vimeo_videos_getThumbnailUrls(self, video_id):
+        """
+        Get the URLs of a video's thumbnails.
+        """
+        params={'video_id':video_id}
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # sort (optional)
+    # Method to sort by: newest, oldest, most_played, most_commented, or most_liked.
+    # user_id (required)
+    # The ID number or username of the user. A token may be used instead.
+    def vimeo_videos_getUploaded(self, user_id,
+                                 full_response=None, page=None,
+                                 per_page=None, sort=None):
+        """
+        Get a list of videos uploaded by a user.
+        """
+        params={'user_id':user_id}
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # user_id (required)
+    # The user to remove from the cast.
+    # video_id (required)
+    # The video to remove the cast member from.
+    # Example Responses
+    def vimeo_videos_removeCast(self, user_id, video_id):
+        """
+        Remove a cast member from a video.
+  
+        This method returns an empty success response.
+        """
+        params={'user_id':user_id,
+                'video_id':video_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # tag_id (required)
+    # The ID of the tag to remove from the video.
+    # video_id (required)
+    # The video to remove the tag from.
+    def vimeo_videos_removeTag(self, tag_id, video_id):
+        """
+        Remove a tag from a video.
+
+        This method returns an empty success response.
+        """
+        params={'video_id':video_id,
+                'tag_id':tag_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # full_response (optional)
+    # Set this parameter to get back the full video information.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of videos to show on each page. Max 50.
+    # query (required)
+    # The search terms
+    # sort (optional)
+    # Method to sort by: relevant, newest, oldest, most_played, most_commented, or most_liked.
+    # user_id (optional)
+    # The ID number or username of the user.
+    def vimeo_videos_search(self, query, user_id=None,
+                            full_response=None, page=None,
+                            per_page=None, sort=None):
+
+        """
+        Search for videos.
+        """
+        params={'query':query}
+        if user_id != None:
+            params['user_id'] = user_id
+        if full_response != None:
+            params['full_response'] = full_response
+        if per_page != None:
+            params['per_page'] = per_page
+        if page != None:
+            params['page'] = page
+        if sort != None:
+            params['sort'] = sort
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+
+    # description (required)
+    # The new description (can be blank).
+    # video_id (required)
+    # The ID of the video.
+    def vimeo_videos_setDescription(self, description, video_id):
+        """
+        Set the description for a video, overwriting the previous description.
+
+        This method returns an empty success response.
+        """
+        params={'video_id':video_id,
+                'description':description}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # like (required)
+    # If this is true, we will record that the user likes this
+    # video. If false, we will remove it from their liked videos.
+    # oauth_token (required)
+    # The access token for the acting user.
+    # video_id (required)
+    # The ID of the video to like.
+    # Example Responses
+    def vimeo_videos_setLike(self, like, video_id):
+        """
+        Set whether or not the user likes a video.
+
+        This method returns an empty success response.
+        """
+        params={'video_id':video_id,
+                'like': like}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # password (optional)
+    # The password to protect the video with.
+    # privacy (required)
+    # The privacy setting to use.
+    # users (optional)
+    # A comma-separated list of users who can view the video.
+    # video_id (required)
+    # The ID of the video.
+    def vimeo_videos_setPrivacy(self, privacy, video_id,
+                                users=[], password=None):
+        """
+        Set the privacy of a video. The possible privacy settings are
+        anybody, nobody, contacts, users, password, or disable.
+        
+        anybody - anybody can view the video
+        nobody - only the owner can view the video
+        contacts - only the owner's contacts can view the video
+        users - only specific users can view the video
+        password - the video will require a password
+        disable  - the video will not appear on Vimeo.com at all
+        """
+        params={'video_id':video_id,
+                'privacy':privacy}
+        if users != []:
+            params['users'] = ','.join(users)
+        if password != None:
+            params['passworrd'] = password
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # title (required)
+    # The new title. If left blank, title will be set to "Untitled".
+    # video_id (required)
+    # The ID of the video.
+    def vimeo_videos_setTitle(self, title, video_id):
+        """
+        Sets the title of a video, overwriting the previous title.
+        """
+        params={'video_id':video_id,
+                'title':title}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # comment_text (required)
+    # The text of the comment.
+    # reply_to_comment_id (optional)
+    # If this is a reply to another comment, include that comment's ID.
+    # video_id (required)
+    # The video to comment on.
+    def vimeo_videos_comments_addComment(self, comment_text, video_id,
+                                         reply_to_comment_id=None):
+        """
+        Add a comment to a video.
+        """
+        params={'comment_text':comment_text,
+                'video_id':video_id}
+
+        if reply_to_comment_id != None:
+            params['reply_to_comment_id'] = reply_to_comment_id
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+
+    # comment_id (required)
+    # The ID of the comment to delete.
+    # video_id (required)
+    # The video that has the comment.
+    def vimeo_videos_comments_deleteComment(self, comment_id, video_id):
+        """
+        Delete a specific comment from a video.
+        """
+        params={'comment_id':comment_id,
+                'video_id':video_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
 
 # vimeo.videos.comments.editComment
 # Edit the text of a comment posted to a video.
