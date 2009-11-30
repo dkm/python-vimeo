@@ -126,23 +126,23 @@ class VimeoOAuthClient(oauth.OAuthClient):
         ans = self.curly.do_request(oauth_request.to_url())
         return oauth.OAuthToken.from_string(ans)
 
-    def vimeo_oauth_checkAccessToken(self, auth_token):
-        pass
-
-
-    def _do_vimeo_authenticated_call(self, method, parameters={}):
+    def _do_vimeo_call(self, method, parameters={}, authenticated=True):
         """
-        Wrapper to send an authenticated call to vimeo. You first need to have
-        an access token.
+        Wrapper to send a call to vimeo
         """
-
         parameters['method'] = method
-        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
-                                                                 token=self.token,
-                                                                 http_method='GET',
-                                                                 http_url=API_REST_URL,
-                                                                 parameters=parameters)
-        oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
+        if authenticated:
+            oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                       token=self.token,
+                                                                       http_method='GET',
+                                                                       http_url=API_REST_URL,
+                                                                       parameters=parameters)
+        else:
+            oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                       http_method='GET',
+                                                                       http_url=API_REST_URL,
+                                                                       parameters=parameters)
+        oauth_request.sign_request(HMAC_SHA1, self.consumer, None)
         return self.curly.do_rest_call(oauth_request.to_url())
         
     def _do_vimeo_unauthenticated_call(self, method, parameters={}):
@@ -152,9 +152,9 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         parameters['method'] = method
         oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
-                                                                 http_method='GET',
-                                                                 http_url=API_REST_URL,
-                                                                 parameters=parameters)
+                                                                   http_method='GET',
+                                                                   http_url=API_REST_URL,
+                                                                   parameters=parameters)
         oauth_request.sign_request(HMAC_SHA1, self.consumer, None)
         return self.curly.do_rest_call(oauth_request.to_url())
 ###
@@ -169,8 +169,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params = {'album_id': album_id,
                   'video_id': video_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     ## untested
     def vimeo_albums_create(self, title, video_id, 
@@ -187,8 +187,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if videos != []:
             params['videos'] = ','.join(videos)
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
 
     ## untested
     def vimeo_albums_delete(self, album_id):
@@ -198,8 +198,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         This method returns an empty success response.
         """
         params = {'album_id': album_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
         
     def  vimeo_albums_getAll(self, user_id, sort=None,
                              per_page=None,
@@ -216,8 +216,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
     ## untested
     def vimeo_albums_getVideos(self, album_id, full_response=None,
                                page=None, password=None, per_page=None):
@@ -235,8 +235,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if per_page != None:
             params['per_page'] = per_page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
     ## untested
     def vimeo_albums_removeVideo(self, album_id, video_id=None):
         """
@@ -248,8 +248,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if video_id != None:
             params['video_id'] = video_id
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
 
     ## untested
     def vimeo_albums_setDescription(self, album_id, description):
@@ -262,8 +262,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params = {'album_id': album_id,
                   'description': description}
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
 
     ## untested
     def vimeo_albums_setPassword(self, album_id, password):
@@ -275,8 +275,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params = {'album_id': album_id,
                   'password': password}
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
 
     ## untested
     def vimeo_albums_setTitle(self, album_id, title):
@@ -288,8 +288,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params = {'album_id': album_id,
                   'title': title}
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
 
         
 ###
@@ -309,8 +309,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params = {'channel_id': channel_id,
                   'video_id': video_id}
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
 
 
     def vimeo_channels_getInfo(self, channel_id):
@@ -319,8 +319,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params = {'channel_id': channel_id}
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False) 
 
         
     def vimeo_channels_getModerators(self, channel_id, page=None, per_page=None):
@@ -333,8 +333,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if per_page != None:
             params = {'per_page': per_page}
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False) 
 
 
 
@@ -348,8 +348,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if per_page != None:
             params = {'per_page': per_page}
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False) 
 
 
     def vimeo_channels_getVideos(self, channel_id, full_response=None,
@@ -365,8 +365,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if full_response != None:
             params = {'full_response': full_response}
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False) 
 
     def vimeo_channels_removeVideo(self, channel_id, video_id=None):
         """
@@ -378,8 +378,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if video_id != None:
             params['video_id'] = video_id
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
 
 
     ## channel_id is optional in doc ?!
@@ -390,8 +390,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         This method returns an empty success response.
         """
         params = {'channel_id': channel_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
         
     ## channel_id optional in doc ?!
     def vimeo_channels_unsubscribe(self, channel_id):
@@ -401,8 +401,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         This method returns an empty success response.
         """
         params = {'channel_id': channel_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params) 
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params) 
 
 
     def vimeo_channels_getAll(self, sort=None,
@@ -422,8 +422,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 
 ###
@@ -445,8 +445,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 
     def vimeo_contacts_getMutual(self, user_id,
@@ -462,8 +462,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     def  vimeo_contacts_getOnline(self, page=None, per_page=None):
         """
@@ -476,8 +476,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     def  vimeo_contacts_getWhoAdded(self, user_id,
                                     page=None, per_page=None,
@@ -495,8 +495,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 ###
 ### Groups section
@@ -512,8 +512,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params={'group_id':group_id,
                 'video_id': video_id}
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
 
     def vimeo_groups_getAll(self, page=None, per_page=None, sort=None):
@@ -532,8 +532,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
         
 
     def vimeo_groups_getFiles(self, group_id, page=None, per_page=None):
@@ -547,8 +547,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 
     def vimeo_groups_getInfo(self, group_id):
@@ -556,8 +556,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         Get information for a specific group.
         """
         params = {'group_id':group_id}
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     def vimeo_groups_getMembers(self, group_id, page=None, per_page=None,
                                 sort=None):
@@ -575,8 +575,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 
     def vimeo_groups_getModerators(self, group_id, page=None, per_page=None):
@@ -590,8 +590,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
     
     def  vimeo_groups_getVideoComments(self, group_id, video_id,
                                        page=None, per_page=None):
@@ -606,8 +606,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 
     def vimeo_groups_getVideos(self, group_id, full_response=None,
@@ -627,8 +627,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     ## group_id optional in doc ?!
     def vimeo_groups_join(self, group_id):
@@ -638,8 +638,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         This method returns an empty success response.
         """
         params = {'group_id':group_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     ## group_id optional in doc ?!
     def vimeo_groups_leave(self, group_id):
@@ -649,8 +649,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         This method returns an empty success response.
         """
         params = {'group_id':group_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
 
 ###
@@ -672,8 +672,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     def vimeo_groups_events_getPast(self, group_id, page=None, per_page=None):
         """
@@ -686,8 +686,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     def vimeo_groups_events_getUpcoming(self, group_id,
                                         page=None, per_page=None):
@@ -701,8 +701,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 ###
 ### Groups forums section
@@ -720,8 +720,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 ###
 ### OAuth section
@@ -734,8 +734,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         Return the credentials attached to an Access Token.
         """
         params={}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
         
     ## this method does not need auth, but must include the token
     ## making an auth call should do the trick...
@@ -748,8 +748,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         be valid.
         """
         params={}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
 ###
 ### Videos section
@@ -764,8 +764,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params={'user_id':user_id,
                 'video_id':video_id}
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
     # oauth_token (required)
     # The access token for the acting user.
     # photo_urls (required)
@@ -782,8 +782,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params={'photos_urls':photos_urls,
                 'video_id':video_id}
 
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
 
     # oauth_token (required)
@@ -801,8 +801,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params={'tags':tags,
                 'video_id':video_id}
         
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # video_id (required)
     # The video to remove the tags from.
@@ -814,8 +814,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         This method returns an empty success response.
         """
         params={'video_id':video_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # video_id (required)
     # The video to permanently delete.
@@ -826,8 +826,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         This method returns an empty success response.
         """
         params={'video_id':video_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # full_response (optional)
     # Set this parameter to get back the full video information.
@@ -855,8 +855,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 
     # full_response (optional)
@@ -885,8 +885,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # full_response (optional)
     # Set this parameter to get back the full video information.
@@ -914,8 +914,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # page (optional)
     # The page number to show.
@@ -934,8 +934,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if page != None:
             params['page'] = page
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # full_response (optional)
     # Set this parameter to get back the full video information.
@@ -964,8 +964,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['sort'] = page
 
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 
     # full_response (optional)
@@ -994,8 +994,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # video_id (required)
     # The ID of the video.
@@ -1004,8 +1004,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         Get lots of information on a video.
         """
         params={'video_id':video_id}
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
         
 
     # full_response (optional)
@@ -1034,8 +1034,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         if sort != None:
             params['sort'] = sort
 
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # video_id (required)
     # The ID of the video.
@@ -1047,8 +1047,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         This method returns an empty success response.
         """
         params={'user_id':user_id}
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # full_response (optional)
     # Set this parameter to get back the full video information.
@@ -1075,8 +1075,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['page'] = page
         if sort != None:
             params['sort'] = sort
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # video_id (required)
     # The ID of the video.
@@ -1085,8 +1085,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         Get the URLs of a video's thumbnails.
         """
         params={'video_id':video_id}
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # full_response (optional)
     # Set this parameter to get back the full video information.
@@ -1113,8 +1113,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['page'] = page
         if sort != None:
             params['sort'] = sort
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # user_id (required)
     # The user to remove from the cast.
@@ -1129,8 +1129,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params={'user_id':user_id,
                 'video_id':video_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # tag_id (required)
     # The ID of the tag to remove from the video.
@@ -1144,8 +1144,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params={'video_id':video_id,
                 'tag_id':tag_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # full_response (optional)
     # Set this parameter to get back the full video information.
@@ -1177,8 +1177,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['page'] = page
         if sort != None:
             params['sort'] = sort
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # description (required)
     # The new description (can be blank).
@@ -1192,8 +1192,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params={'video_id':video_id,
                 'description':description}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # like (required)
     # If this is true, we will record that the user likes this
@@ -1211,8 +1211,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params={'video_id':video_id,
                 'like': like}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # password (optional)
     # The password to protect the video with.
@@ -1241,8 +1241,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['users'] = ','.join(users)
         if password != None:
             params['passworrd'] = password
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # title (required)
     # The new title. If left blank, title will be set to "Untitled".
@@ -1254,8 +1254,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params={'video_id':video_id,
                 'title':title}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
 ###
 ### Videos comments section
@@ -1277,8 +1277,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
 
         if reply_to_comment_id != None:
             params['reply_to_comment_id'] = reply_to_comment_id
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # comment_id (required)
     # The ID of the comment to delete.
@@ -1290,8 +1290,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params={'comment_id':comment_id,
                 'video_id':video_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
 
     # comment_id (required)
@@ -1308,8 +1308,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params = {'comment_id': comment_id,
                   'comment_text': comment_text,
                   'video_id': video_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # page (optional)
     # The page number to show.
@@ -1327,8 +1327,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['page'] = page
         if per_page != None:
             params['per_page'] = page
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 ###
 ### Videos embed section
@@ -1347,8 +1347,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['page'] = page
         if per_page != None:
             params['per_page'] = page
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
         
         
 
@@ -1367,8 +1367,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params = {'preset_id': preset_id}
         if video_id != None:
             params['video_id'] = video_id
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
     # ticket_id (required)
     # The upload ticket
@@ -1377,8 +1377,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         Check to make sure an upload ticket is still valid.
         """
         params = {'ticket_id': ticket_id}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
     # filename (optional)
     # optional The name of the file, including extension
@@ -1406,8 +1406,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['json_manifest'] = json_manifest
         if xml_manifest != None:
             params['xml_manifest'] = xml_manifest
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
 
 
 
@@ -1425,7 +1425,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
         recombining pieces. This will allow you to build an uploader capable
         of resuming if the connection dies.
         """
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'))
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'))
                                                  
     # json_manifest (required)
     # The JSON-encoded manifest
@@ -1451,15 +1451,9 @@ class VimeoOAuthClient(oauth.OAuthClient):
         params = {'json_manifest': json_manifest,
                   'ticket_id': ticket_id,
                   'xml_manifest': xml_manifest}
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                 parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params)
         
-
-
-
-
-
-
 ###
 ### People section
 ###
@@ -1476,8 +1470,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         ## for simplicity, I'm using a signed call, but it's
         ## useless. Tokens & stuff will simply get echoed as the
         ## others parameters are.
-        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
-                                                   parameters=params)
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
+                                   parameters=params, authenticated=False)
 
 
     def vimeo_test_login(self):
@@ -1494,7 +1488,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
         You can use this method to make sure that you are properly
         contacting to the Vimeo API.
         """
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'))
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'))
 
 
 ###
@@ -1513,7 +1507,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
         otherwise. Resets is the number of the day of the week,
         starting with Sunday.
         """
-        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'))
+        return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'))
     
 
 
