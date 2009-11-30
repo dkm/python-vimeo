@@ -2,20 +2,25 @@ Source: python-vimeo
 Section: libs
 Priority: extra
 Maintainer: Marc Poulhiès <dkm@kataplop.net>
-Build-Depends: cdbs, debhelper (>= 7), python-support, python-all-dev
+Build-Depends: cdbs, debhelper (>= 7), python-support, python-all-dev, python-pycurl
 Standards-Version: 3.8.1
 
 Package: python-vimeo
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, python (>=2.5), python-oauth
-Description: python module for using vimeo
- Python module for using API offered by vimeo
+Depends: ${shlibs:Depends}, ${misc:Depends}, python (>=2.5), python-oauth, python-pycurl
+Description: Vimeo API wrapper for Python
+ Python-vimeo is a complete and easy to use Python module
+ for interacting with the vimeo API.
 
 
 Package: vimeo-tools
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, python (>=2.5), python-vimeo
-Description: tools to handle videos on Vimeo
- tools to handle videos on Vimeo
+Description: Tools to interact with vimeo
+ Various tools to interact with vimeo.
+ .
+ These tools use the python-vimeo module to use the
+ vimeo API.
+
 
 
