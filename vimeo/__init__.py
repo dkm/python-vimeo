@@ -23,11 +23,9 @@
 Python module to interact with Vimeo through its API (version 2)
 """
 
-import urllib
-import pycurl
 import xml.etree.ElementTree as ET
 import inspect
-##from oauth import OAuthRequest, OAuthToken
+
 import oauth.oauth as oauth
 
 REQUEST_TOKEN_URL = 'http://vimeo.com/oauth/request_token'
@@ -37,12 +35,9 @@ AUTHORIZATION_URL = 'http://vimeo.com/oauth/authorize'
 API_REST_URL = 'http://vimeo.com/api/rest/v2/'
 API_V2_CALL_URL = 'http://vimeo.com/api/v2/'
 
-USER_AGENT = 'python-vimeo http://github.com/dkm/python-vimeo'
-
 PORT=80
 
 HMAC_SHA1 = oauth.OAuthSignatureMethod_HMAC_SHA1()
-
 
 class VimeoException(Exception):
     def __init__(self, msg):
@@ -52,107 +47,8 @@ class VimeoException(Exception):
     def __str__(self):
         return self.msg
 
-class CurlyRestException(Exception):
-    def __init__(self, code, msg, full):
-        Exception.__init__(self)
-        self.code = code
-        self.msg = msg
-        self.full = full
 
-    def __str__(self):
-        return "Error code: %s, message: %s\nFull message: %s" % (self.code, 
-                                                                  self.msg, 
-                                                                  self.full)
-
-
-class CurlyRequest:
-    """
-    A CurlyRequest object is used to send HTTP requests.
-    It's a simple wrapper around basic curl methods.
-    In particular, it can upload files and display a progress bar.
-    """
-    def __init__(self, pbarsize=19):
-        self.buf = None
-        self.pbar_size = pbarsize
-        self.pidx = 0
-
-    def do_rest_call(self, url):
-        """
-        Send a simple GET request and interpret the answer as a REST reply.
-        """
-
-        res = self.do_request(url)
-        try:
-            t = ET.fromstring(res)
-
-            if t.attrib['stat'] == 'fail':
-                err_code = t.find('err').attrib['code']
-                err_msg = t.find('err').attrib['msg']
-                raise CurlyRestException(err_code, err_msg, ET.tostring(t))
-            return t
-        except Exception,e:
-            print "Error with:", res
-            raise e
-
-    def _body_callback(self, buf):
-        self.buf += buf
-
-    def do_request(self, url):
-        """
-        Send a simple GET request
-        """
-        self.buf = ""
-        curl = pycurl.Curl()
-        curl.setopt(pycurl.USERAGENT, USER_AGENT)
-        curl.setopt(curl.URL, url)
-        curl.setopt(curl.WRITEFUNCTION, self._body_callback)
-        curl.perform()
-        curl.close()
-        p = self.buf
-        self.buf = ""
-        return p
-    
-    def _upload_progress(self, download_t, download_d, upload_t, upload_d):
-        # this is only for upload progress bar
-	if upload_t == 0:
-            return 0
-
-        self.pidx = (self.pidx + 1) % len(TURNING_BAR)
-
-        done = int(self.pbar_size * upload_d / upload_t)
-
-        if done != self.pbar_size:
-            pstr = '#'*done  +'>' + ' '*(self.pbar_size - done - 1)
-        else:
-            pstr = '#'*done
-
-        print "\r%s[%s]  " %(TURNING_BAR[self.pidx], pstr),
-        return 0
-        
-    def do_post_call(self, url, args, use_progress=False):
-        """
-        Send a simple POST request
-        """
-        c = pycurl.Curl()
-        c.setopt(c.POST, 1)
-        c.setopt(c.URL, url)
-        c.setopt(c.HTTPPOST, args)
-        c.setopt(c.WRITEFUNCTION, self.body_callback)
-        #c.setopt(c.VERBOSE, 1)
-        self.buf = ""
-
-        c.setopt(c.NOPROGRESS, 0)
-        
-        if use_progress:
-            c.setopt(c.PROGRESSFUNCTION, self._upload_progress)
-
-        c.perform()
-        c.close()
-        res = self.buf
-        self.buf = ""
-        return res
-
-class SimpleOAuthClient(oauth.OAuthClient):
+class VimeoOAuthClient(oauth.OAuthClient):
     """
     Class used for handling authenticated call to the API.
     """
@@ -601,6 +497,10 @@ class SimpleOAuthClient(oauth.OAuthClient):
 
         return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                    parameters=params)
+
+###
+### Groups section
+###
         
     def vimeo_groups_addVideo(self, group_id, video_id):
         """
@@ -752,6 +652,10 @@ class SimpleOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                  parameters=params)
 
+
+###
+### Groups Events section
+###
     def vimeo_groups_events_getMonth(self, group_id, month=None, year=None,
                                      page=None, per_page=None):
         """
@@ -800,6 +704,9 @@ class SimpleOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                    parameters=params)
 
+###
+### Groups forums section
+###
     def vimeo_groups_forums_getTopicComments(self, group_id, topic_id,
                                              page=None, per_page=None):
         """
@@ -815,6 +722,10 @@ class SimpleOAuthClient(oauth.OAuthClient):
 
         return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                    parameters=params)
+
+###
+### OAuth section
+###
 
     ## this method does not need auth, but must include the token
     ## making an auth call should do the trick...
@@ -840,6 +751,9 @@ class SimpleOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                  parameters=params)
 
+###
+### Videos section
+###
 
     def vimeo_videos_addCast(self, user_id, video_id, role=None):
         """
@@ -1343,6 +1257,10 @@ class SimpleOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                  parameters=params)
 
+###
+### Videos comments section
+###
+
     # comment_text (required)
     # The text of the comment.
     # reply_to_comment_id (optional)
@@ -1411,6 +1329,10 @@ class SimpleOAuthClient(oauth.OAuthClient):
             params['per_page'] = page
         return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                    parameters=params)
+
+###
+### Videos embed section
+###
 
     # page (optional)
     # The page number to show.
@@ -1534,21 +1456,9 @@ class SimpleOAuthClient(oauth.OAuthClient):
         
 
 
-###
-### Groups section
-###
 
-###
-### Groups Events section
-###
 
-###
-### Groups forums section
-###
 
-###
-### OAuth section
-###
 
 ###
 ### People section
@@ -1585,20 +1495,6 @@ class SimpleOAuthClient(oauth.OAuthClient):
         contacting to the Vimeo API.
         """
         return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'))
-
-
-###
-### Videos section
-###
-
-
-###
-### Videos comments section
-###
-
-###
-### Videos embed section
-###
 
 
 ###
