@@ -201,7 +201,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
                                    parameters=params) 
         
-    def  vimeo_albums_getAll(self, user_id, sort=None,
+    def vimeo_albums_getAll(self, user_id, sort=None,
                              per_page=None,
                              page=None):
         """
@@ -465,7 +465,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
                                    parameters=params, authenticated=False)
 
-    def  vimeo_contacts_getOnline(self, page=None, per_page=None):
+    def vimeo_contacts_getOnline(self, page=None, per_page=None):
         """
         Get a list of the user's contacts who are currently online.
         """
@@ -479,9 +479,9 @@ class VimeoOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
                                    parameters=params, authenticated=False)
 
-    def  vimeo_contacts_getWhoAdded(self, user_id,
-                                    page=None, per_page=None,
-                                    sort=None):
+    def vimeo_contacts_getWhoAdded(self, user_id,
+                                   page=None, per_page=None,
+                                   sort=None):
         """
         Get a list of the users who have added a specific user as a
         contact.
@@ -593,8 +593,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
                                    parameters=params, authenticated=False)
     
-    def  vimeo_groups_getVideoComments(self, group_id, video_id,
-                                       page=None, per_page=None):
+    def vimeo_groups_getVideoComments(self, group_id, video_id,
+                                      page=None, per_page=None):
         """
         Get a list of the comments on a video in a group.
         """
@@ -773,7 +773,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
     # video_id (required)
     # The video to add photos to.
     # Example Responses
-    def  vimeo_videos_addPhotos(self, photos_urls, video_id):
+    def vimeo_videos_addPhotos(self, photos_urls, video_id):
         """
         Add Flickr photos to a video.
 
@@ -792,7 +792,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
     # A comma-separated list of tags to add to the video.
     # video_id (required)
     # The video to add tags to.
-    def  vimeo_videos_addTags(self, tags, video_id):
+    def vimeo_videos_addTags(self, tags, video_id):
         """
         Add tags to a video.
 
