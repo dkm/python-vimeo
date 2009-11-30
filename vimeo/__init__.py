@@ -1375,154 +1375,163 @@ class SimpleOAuthClient(oauth.OAuthClient):
         return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
                                                  parameters=params)
 
-# vimeo.videos.comments.editComment
-# Edit the text of a comment posted to a video.
-# Authentication
 
-# This method requires authentication with write permission.
+    # comment_id (required)
+    # The comment to edit.
+    # comment_text (required)
+    # The new text of the comment.
+    # video_id (required)
+    # The video that has the comment.
+    def vimeo_videos_comments_editComment(self, comment_id,
+                                          comment_text, video_id):
+        """
+        Edit the text of a comment posted to a video.
+        """
+        params = {'comment_id': comment_id,
+                  'comment_text': comment_text,
+                  'video_id': video_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
 
-# API Parameters
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of comments to show on each page. Max 50.
+    # video_id (required)
+    # The ID of the video.
+    def vimeo_videos_comments_getList(self, video_id,
+                                      page=None, per_page=None):
+        """
+        Get a list of the comments on a video.
+        """
+        params = {'video_id': video_id}
+        if page != None:
+            params['page'] = page
+        if per_page != None:
+            params['per_page'] = page
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
 
-# comment_id (required)
-# The comment to edit.
-# comment_text (required)
-# The new text of the comment.
-# oauth_token (required)
-# The access token for the acting user.
-# video_id (required)
-# The video that has the comment.
+    # page (optional)
+    # The page number to show.
+    # per_page (optional)
+    # Number of presets to show on each page. Max 50.
+    def vimeo_videos_embed_getPresets(self, page=None, per_page=None):
+        """
+        Get the available embed presets for a user.
+        """
+        params = {}
+        if page != None:
+            params['page'] = page
+        if per_page != None:
+            params['per_page'] = page
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
+        
+        
 
-# vimeo.videos.comments.getList
-# Get a list of the comments on a video.
-# Authentication
+    # preset_id (required)
+    # The embed preset ID
+    # video_id (optional)
+    # The ID of the video.
+    # Example Responses
+    def vimeo_videos_embed_setPreset(self, preset_id,
+                                     video_id=None):
+        """
+        Set the embed preferences of a video using an embed preset.
+        
+        This method returns an empty success response.
+        """
+        params = {'preset_id': preset_id}
+        if video_id != None:
+            params['video_id'] = video_id
+        return self._do_vimeo_unauthenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                   parameters=params)
 
-# This method does not require authentication.
+    # ticket_id (required)
+    # The upload ticket
+    def vimeo_videos_upload_checkTicket(self, ticket_id):
+        """
+        Check to make sure an upload ticket is still valid.
+        """
+        params = {'ticket_id': ticket_id}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
 
-# API Parameters
-
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of comments to show on each page. Max 50.
-# video_id (required)
-# The ID of the video.
-
-# vimeo.videos.embed.getPresets	 
-# Get the available embed presets for a user.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# page (optional)
-# The page number to show.
-# per_page (optional)
-# Number of presets to show on each page. Max 50.
-
-
-# vimeo.videos.embed.setPreset	 
-# Set the embed preferences of a video using an embed preset.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# preset_id (required)
-# The embed preset ID
-# video_id (optional)
-# The ID of the video.
-# Example Responses
-
-# This method returns an empty success response.
-
-# vimeo.videos.upload.checkTicket
-# Check to make sure an upload ticket is still valid.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-# ticket_id (required)
-# The upload ticket
-
-
-# vimeo.videos.upload.confirm
-# Complete the upload process.	
-
-# If you uploaded only one chunk, you may skip passing a manifest, but if you uploaded multiple files, you must POST a manifest to this method. You can use either an XML or JSON formatted manifest. The manifest should not be included in the signature.
-# Authentication
-
-# This method requires authentication with read permission.
-
-# API Parameters
-
-# filename (optional)
-# optional The name of the file, including extension
-# json_manifest (optional)
-# optional The JSON-encoded manifest
-# oauth_token (required)
-# The access token for the acting user.
-# ticket_id (required)
-# The upload ticket
-# xml_manifest (optional)
-# optional The XML-formatted manifest
-
-
-# vimeo.videos.upload.getQuota
-# Get the space and number of HD uploads left for a user.	
-
-# Numbers are provided in bytes. It's a good idea to check this method before you upload a video to let the user know if their video will be converted to HD. hd_quota will have a value of 0 if the user reached the max number of uploads, 1 otherwise. Resets is the number of the day of the week, starting with Sunday.
-# Authentication
-
-# This method requires authentication with read permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
+    # filename (optional)
+    # optional The name of the file, including extension
+    # json_manifest (optional)
+    # optional The JSON-encoded manifest
+    # ticket_id (required)
+    # The upload ticket
+    # xml_manifest (optional)
+    # optional The XML-formatted manifest
+    def vimeo_videos_upload_confirm(self, ticket_id,
+                                    filename=None, json_manifest=None,
+                                    xml_manifest=None):
+        """                                    
+        Complete the upload process.	
+        
+        If you uploaded only one chunk, you may skip passing a manifest, but
+        if you uploaded multiple files, you must POST a manifest to this
+        method. You can use either an XML or JSON formatted manifest. The
+        manifest should not be included in the signature.
+        """
+        params = {'ticket_id': ticket_id}
+        if filename != None:
+            params['filename'] = filename
+        if json_manifest != None:
+            params['json_manifest'] = json_manifest
+        if xml_manifest != None:
+            params['xml_manifest'] = xml_manifest
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
 
 
-# vimeo.videos.upload.getTicket
-# Generate a new upload ticket. This ticket is good for one upload by one user.	
 
-# Once you have the endpoint and the ticket id, you can conduct successive POSTs to the endpoint. You can POST the entire file or break it into pieces and post each one into a field called "file_data". After each post, the server will return an unformatted MD5 of the uploaded file. If this does not match what you uploaded, you can upload again and choose not to use this piece later when recombining pieces. This will allow you to build an uploader capable of resuming if the connection dies.
-# Authentication
+    def vimeo_videos_upload_getTicket(self):
+        """
+        Generate a new upload ticket. This ticket is good for one upload by
+        one user.
 
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# oauth_token (required)
-# The access token for the acting user.
-
-# vimeo.videos.upload.verifyManifest
-# Verify and combine any pieces uploaded.	
-
-# Once the video is uploaded you must provide the MD5s of each piece that was uploaded. If you uploaded several pieces, the order of the pieces in the list dictates the order in which they will be combined. The server will return the MD5 of the entire file, and a list of the MD5s of any files that you uploaded but did not include in the manifest. You can use either an XML or JSON formatted manifest. It should not be included in the signature.
-# Authentication
-
-# This method requires authentication with write permission.
-
-# API Parameters
-
-# json_manifest (required)
-# The JSON-encoded manifest
-# oauth_token (required)
-# The access token for the acting user.
-# ticket_id (required)
-# The upload ticket
-# xml_manifest (required)
-# The XML-formatted manifest
-
+        Once you have the endpoint and the ticket id, you can conduct
+        successive POSTs to the endpoint. You can POST the entire file or
+        break it into pieces and post each one into a field called
+        "file_data". After each post, the server will return an unformatted
+        MD5 of the uploaded file. If this does not match what you uploaded,
+        you can upload again and choose not to use this piece later when
+        recombining pieces. This will allow you to build an uploader capable
+        of resuming if the connection dies.
+        """
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'))
+                                                 
+    # json_manifest (required)
+    # The JSON-encoded manifest
+    # oauth_token (required)
+    # The access token for the acting user.
+    # ticket_id (required)
+    # The upload ticket
+    # xml_manifest (required)
+    # The XML-formatted manifest
+    def vimeo_videos_upload_verifyManifest(self, json_manifest, ticket_id, xml_manifest):
+        """
+        Verify and combine any pieces uploaded.	
+        
+        Once the video is uploaded you must provide the MD5s of each
+        piece that was uploaded. If you uploaded several pieces, the
+        order of the pieces in the list dictates the order in which
+        they will be combined. The server will return the MD5 of the
+        entire file, and a list of the MD5s of any files that you
+        uploaded but did not include in the manifest. You can use
+        either an XML or JSON formatted manifest. It should not be
+        included in the signature.
+        """
+        params = {'json_manifest': json_manifest,
+                  'ticket_id': ticket_id,
+                  'xml_manifest': xml_manifest}
+        return self._do_vimeo_authenticated_call(inspect.stack()[0][3].replace('_', '.'),
+                                                 parameters=params)
+        
 
 
 ###
@@ -1548,6 +1557,7 @@ class SimpleOAuthClient(oauth.OAuthClient):
 ###
 ### Test section
 ###
+
     def vimeo_test_echo(self, params={}):
         """
         This will just repeat back any parameters that you send. 
