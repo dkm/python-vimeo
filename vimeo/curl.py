@@ -20,6 +20,7 @@
 
 
 import pycurl
+import xml.etree.ElementTree as ET
 
 USER_AGENT = 'python-vimeo http://github.com/dkm/python-vimeo'
 

@@ -25,6 +25,7 @@ Python module to interact with Vimeo through its API (version 2)
 
 import xml.etree.ElementTree as ET
 import inspect
+import curl
 
 import oauth.oauth as oauth
 
@@ -68,7 +69,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
         finally get_access_token().
         """
 
-        self.curly = CurlyRequest()
+        self.curly = curl.CurlyRequest()
         self.key = key
         self.secret = secret
         self.server = server
@@ -1516,7 +1517,7 @@ def _simple_request(url, format):
     if format != 'xml':
         raise VimeoException("Sorry, only 'xml' supported. '%s' was requested." %format)
 
-    curly = CurlyRequest()
+    curly = curl.CurlyRequest()
     url = url %(format)
     ans = curly.do_request(url)
 
