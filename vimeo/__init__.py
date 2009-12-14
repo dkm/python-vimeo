@@ -60,7 +60,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
                  access_token_url=ACCESS_TOKEN_URL, 
                  authorization_url=AUTHORIZATION_URL,
                  token=None,
-                 token_secret=None):
+                 token_secret=None,
+                 verifier=None):
         """
         You need to give both key (consumer key) and secret (consumer secret).
         If you already have an access token (token+secret), you can use it
@@ -81,6 +82,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
 
         if token != None and token_secret != None:
             self.token = oauth.OAuthToken(token, token_secret)
+            self.token.set_verifier(verifier)
         else:
             self.token = None
         
@@ -88,22 +90,22 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         Requests a request token and return it on success.
         """
-        oauth_request = oauth.OAuthToken.from_consumer_and_token(self.consumer, 
-                                                                 http_url=self.request_token_url)
+        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, 
+                                                                   http_url=self.request_token_url)
         oauth_request.sign_request(HMAC_SHA1, self.consumer, None)
         self.token = self._fetch_token(oauth_request)
 
 
-    def get_authorize_token_url(self):
+    def get_authorize_token_url(self, permission='read'):
         """
         Returns a URL used to verify and authorize the application to access
         user's account. The pointed page should contain a simple 'password' that
         acts as the 'verifier' in oauth.
         """
 
-        oauth_request = oauth.OAuthToken.from_token_and_callback(token=self.token, 
-                                                                 http_url=self.authorization_url)
-        return oauth_request.to_url()
+        oauth_request = oauth.OAuthRequest.from_token_and_callback(token=self.token, 
+                                                                   http_url=self.authorization_url)
+        return oauth_request.to_url() + "&permission=" + permission
 
 
     def get_access_token(self, verifier):
@@ -113,12 +115,13 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
 
         self.token.set_verifier(verifier)
-        oauth_request = oauth.OAuthToken.from_consumer_and_token(self.consumer, 
-                                                                 token=self.token, 
-                                                                 verifier=verifier, 
-                                                                 http_url=self.access_token_url)
+        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, 
+                                                                   token=self.token, 
+                                                                   verifier=verifier, 
+                                                                   http_url=self.access_token_url)
         oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
         self.token = self._fetch_token(oauth_request)
+        return self.token
 
     def _fetch_token(self, oauth_request):
         """
@@ -143,7 +146,7 @@ class VimeoOAuthClient(oauth.OAuthClient):
                                                                        http_method='GET',
                                                                        http_url=API_REST_URL,
                                                                        parameters=parameters)
-        oauth_request.sign_request(HMAC_SHA1, self.consumer, None)
+        oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
         return self.curly.do_rest_call(oauth_request.to_url())
         
     def _do_vimeo_unauthenticated_call(self, method, parameters={}):
