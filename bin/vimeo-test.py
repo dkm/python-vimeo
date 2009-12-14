@@ -137,7 +137,7 @@ def main(argv):
         print client.get_authorize_token_url()
         verifier = sys.stdin.readline().strip()
         print "Using ", verifier, " as verifier"
-        print client.get_access_token(verifier)
+        print "Token is:", client.get_access_token(verifier)
     else:
         client = SimpleOAuthClient(options.key, options.secret,
                                    token=options.access_token,
