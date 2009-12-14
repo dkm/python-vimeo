@@ -130,6 +130,15 @@ class VimeoOAuthClient(oauth.OAuthClient):
         ans = self.curly.do_request(oauth_request.to_url())
         return oauth.OAuthToken.from_string(ans)
 
+    def _do_compute_vimeo_upload(self, endpoint, ticket_id):
+        oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
+                                                                   token=self.token,
+                                                                   http_method='POST',
+                                                                   http_url=endpoint,
+                                                                   parameters={'ticket_id': ticket_id})
+        oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
+        return oauth_request.to_url()
+
     def _do_vimeo_call(self, method, parameters={}, authenticated=True):
         """
         Wrapper to send a call to vimeo
