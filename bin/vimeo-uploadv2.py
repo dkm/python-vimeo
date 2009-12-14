@@ -19,8 +19,7 @@
 
 
 """
-This script contains various call to vimeo API
-in order the check the correct behavior of python-vimeo.
+This is an upload script for Vimeo using its v2 API
 """
 
 
@@ -74,35 +73,6 @@ def main(argv):
     print tid, endp
     print client._do_compute_vimeo_upload(endp, tid)
     
-    
-
-#     # print "test null"
-#     # client.vimeo_test_null()
-    
-#     # print "test login"
-#     # client.vimeo_test_login()
-
-#     print "test echo"
-#     client.vimeo_test_echo({'tata':'prout', 'prout':'caca'})
-
-#     print "albums getAll"
-#     client.vimeo_albums_getAll('1443699')
-    
-#     print "channels getAll"
-#     client.vimeo_channels_getAll()
-
-    # oauth_request = oauth.OAuthRequest.from_token_and_callback(token=token, 
-    #                                                            http_url=client.authorization_url)
-    # response = client.authorize_token(oauth_request)
-    # print response
-
-    # oauth_request = oauth.OAuthRequest.from_consumer_and_token(consumer, 
-    #                                                            token=token, 
-    #                                                            http_method='GET', 
-    #                                                            http_url=RESOURCE_URL, 
-    #                                                            parameters=parameters)
-    # oauth_request.sign_request(signature_method_hmac_sha1, consumer, token)
-
 if __name__ == '__main__':
     main(sys.argv)
     ##print vimeo.user_videos('dkm')
