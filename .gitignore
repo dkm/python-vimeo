@@ -1,0 +1,12 @@
+*.pyc
+build/
+debian/*
+
+!debian/changelog
+!debian/control
+!debian/copyright
+!debian/pycompat
+!debian/python-vimeo.install
+!debian/rules
+!debian/vimeo-tools.install
+!debian/compat
