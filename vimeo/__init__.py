@@ -61,7 +61,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
                  authorization_url=AUTHORIZATION_URL,
                  token=None,
                  token_secret=None,
-                 verifier=None):
+                 verifier=None,
+                 vimeo_config=None):
         """
         You need to give both key (consumer key) and secret (consumer secret).
         If you already have an access token (token+secret), you can use it
@@ -79,6 +80,16 @@ class VimeoOAuthClient(oauth.OAuthClient):
         self.access_token_url = access_token_url
         self.authorization_url = authorization_url
         self.consumer = oauth.OAuthConsumer(self.key, self.secret)
+
+        self.config = vimeo_config
+        if self.config != None:
+            try:
+                token = self.config.get("auth", "token")
+                token_secret = self.config.get("auth", "token_secret")
+                verifier = self.config.get("auth", "verifier")
+            except ConfigParser.NoSectionError, e:
+                # not everything in config file. Simply skip
+                pass
 
         if token != None and token_secret != None:
             self.token = oauth.OAuthToken(token, token_secret)

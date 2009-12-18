@@ -24,6 +24,7 @@ This is an upload script for Vimeo using its v2 API
 
 
 import vimeo
+import vimeo.config
 import oauth.oauth as oauth
 import sys
 import optparse
@@ -44,25 +45,32 @@ def main(argv):
     parser.add_option('-v', '--verifier',
                       help="Verifier for token")
 
-
     (options, args) = parser.parse_args(argv[1:])
-    
-    if None in (options.key, options.secret):
-        print "Missing key or secret"
+
+    vconfig = vimeo.config.VimeoConfig(options)
+
+    if not vconfig.has_option("appli", "consumer_key"):
+        print "Missing consumer key"
         sys.exit(-1)
 
-    if None in (options.access_token, options.access_token_secret, options.verifier):
-        client = vimeo.VimeoOAuthClient(options.key, options.secret)
+    if not vconfig.has_option("appli", "consumer_secret"):
+        print "Missing consumer secret"
+        sys.exit(-1)
+
+    if not (vconfig.has_option("auth", "token") and vconfig.has_option("auth", "token_secret") and vconfig.has_option("auth", "verifier")):
+        client = vimeo.VimeoOAuthClient(vconfig.get("appli", "consumer_key"),
+                                        vconfig.get("appli", "consumer_secret"))
         client.get_request_token()
         print client.get_authorize_token_url(permission="write")
         verifier = sys.stdin.readline().strip()
         print "Using", verifier, "as verifier"
         print client.get_access_token(verifier)
     else:
-        client = vimeo.VimeoOAuthClient(options.key, options.secret,
-                                        token=options.access_token,
-                                        token_secret=options.access_token_secret,
-                                        verifier=options.verifier)
+        client = vimeo.VimeoOAuthClient(vconfig.get("appli", "consumer_key"),
+                                        vconfig.get("appli", "consumer_secret"),
+                                        token=vconfig.get("auth","token"),
+                                        token_secret=vconfig.get("auth", "token_secret"),
+                                        verifier=vconfig.get("auth", "verifier"))
 
 
     quota = client.vimeo_videos_upload_getQuota().find('user/upload_space').attrib['free']

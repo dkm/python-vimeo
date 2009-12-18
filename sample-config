@@ -1,0 +1,8 @@
+[appli]
+consumer_key:fsdfsd
+consumer_secret:sdpofsd
+
+[auth]
+token: toto
+token_secret: totosecret
+verifier: prout-pouet
