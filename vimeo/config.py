@@ -27,6 +27,15 @@ class VimeoConfig(ConfigParser.ConfigParser):
     def __init__(self, options=None):
         ConfigParser.ConfigParser.__init__(self)
 
+        try:
+            self.read(os.path.expanduser(DEFAULT_CONFIG))
+        except IOError,e:
+            # most probably the file does not exist
+            if os.path.exists(os.path.expanduser(DEFAULT_CONFIG)):
+                # looks like it's something else
+                raise e
+            # if not, simply ignore the error, config is empty
+
         if options == None:
             return
 
@@ -44,12 +53,3 @@ class VimeoConfig(ConfigParser.ConfigParser):
 
         if options.verifier != None:
             self.set("auth", "verifier", options.verifier)
-
-        try:
-            self.read(os.path.expanduser(DEFAULT_CONFIG))
-        except IOError,e:
-            # most probably the file does not exist
-            if os.path.exists(os.path.expanduser(DEFAULT_CONFIG)):
-                # looks like it's something else
-                raise e
-            # if not, simply ignore the error, config is empty
