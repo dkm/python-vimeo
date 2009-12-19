@@ -26,6 +26,7 @@ Python module to interact with Vimeo through its API (version 2)
 import xml.etree.ElementTree as ET
 import inspect
 import curl
+import pycurl
 
 import oauth.oauth as oauth
 
@@ -148,7 +149,16 @@ class VimeoOAuthClient(oauth.OAuthClient):
                                                                    http_url=endpoint,
                                                                    parameters={'ticket_id': ticket_id})
         oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
-        return oauth_request.to_url()
+        return oauth_request.parameters
+
+
+    def do_upload(self, endpoint, ticket_id, filename):
+        post_data = self._do_compute_vimeo_upload(endpoint, ticket_id)
+        post_data['file_data'] = (pycurl.FORM_FILE, filename)
+        # make sure everything is string !
+        post_data_l = [(k,str(v)) for (k,v) in post_data.items()]
+
+        self.curly.do_post_call(endpoint, post_data_l, True)
 
     def _do_vimeo_call(self, method, parameters={}, authenticated=True):
         """
