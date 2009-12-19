@@ -23,7 +23,7 @@ import pycurl
 import xml.etree.ElementTree as ET
 
 USER_AGENT = 'python-vimeo http://github.com/dkm/python-vimeo'
-
+TURNING_BAR='|/-\\'
 
 class CurlyRestException(Exception):
     def __init__(self, code, msg, full):
@@ -67,6 +67,7 @@ class CurlyRequest:
 
     def _body_callback(self, buf):
         self.buf += buf
+        return len(buf)
 
     def do_request(self, url):
         """
@@ -108,7 +109,7 @@ class CurlyRequest:
         c.setopt(c.POST, 1)
         c.setopt(c.URL, url)
         c.setopt(c.HTTPPOST, args)
-        c.setopt(c.WRITEFUNCTION, self.body_callback)
+        c.setopt(c.WRITEFUNCTION, self._body_callback)
         #c.setopt(c.VERBOSE, 1)
         self.buf = ""
 
