@@ -89,7 +89,7 @@ def main(argv):
     (tid, endp) = (t.attrib['id'], t.attrib['endpoint'])
     print "Will upload", options.file
     client.do_upload(endp, tid, options.file)
-    vid = client.vimeo_videos_upload_confirm(ticket_id=tid)
+    vid = client.vimeo_videos_upload_confirm(ticket_id=tid).find('ticket').attrib['video_id']
     print vid
     
 if __name__ == '__main__':
