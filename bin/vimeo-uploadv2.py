@@ -44,6 +44,8 @@ def main(argv):
                       help="Access token secret")
     parser.add_option('-v', '--verifier',
                       help="Verifier for token")
+    parser.add_option('-f', '--file',
+                      help="Video file to upload")
 
     (options, args) = parser.parse_args(argv[1:])
 
@@ -51,10 +53,17 @@ def main(argv):
 
     if not vconfig.has_option("appli", "consumer_key"):
         print "Missing consumer key"
+        parser.print_help()
         sys.exit(-1)
 
     if not vconfig.has_option("appli", "consumer_secret"):
         print "Missing consumer secret"
+        parser.print_help()
+        sys.exit(-1)
+
+    if options.file == None:
+        print "Missing file to upload!"
+        parser.print_help()
         sys.exit(-1)
 
     if not (vconfig.has_option("auth", "token") and vconfig.has_option("auth", "token_secret") and vconfig.has_option("auth", "verifier")):
@@ -78,8 +87,10 @@ def main(argv):
     
     t = client.vimeo_videos_upload_getTicket().find('ticket')
     (tid, endp) = (t.attrib['id'], t.attrib['endpoint'])
-    print tid, endp
-    print client._do_compute_vimeo_upload(endp, tid)
+    print "Will upload", options.file
+    client.do_upload(endp, tid, options.file)
+    vid = client.vimeo_videos_upload_confirm(ticket_id=tid)
+    print vid
     
 if __name__ == '__main__':
     main(sys.argv)
