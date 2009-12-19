@@ -1269,12 +1269,12 @@ class VimeoOAuthClient(oauth.OAuthClient):
         password - the video will require a password
         disable  - the video will not appear on Vimeo.com at all
         """
-        params={'video_id':video_id,
-                'privacy':privacy}
+        params={'video_id': video_id,
+                'privacy': privacy}
         if users != []:
             params['users'] = ','.join(users)
         if password != None:
-            params['passworrd'] = password
+            params['password'] = password
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
                                    parameters=params)
 

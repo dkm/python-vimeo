@@ -34,6 +34,8 @@ def main(argv):
     parser = optparse.OptionParser(
         usage='Usage: %prog [options]',
         description="Simple Vimeo uploader")
+
+    # auth/appli stuff
     parser.add_option('-k', '--key',
                       help="Consumer key")
     parser.add_option('-s', '--secret',
@@ -44,8 +46,15 @@ def main(argv):
                       help="Access token secret")
     parser.add_option('-v', '--verifier',
                       help="Verifier for token")
+
+    # file upload stuff
     parser.add_option('-f', '--file',
                       help="Video file to upload")
+    parser.add_option('--title',
+                      help="Set the video title")
+    parser.add_option('--privacy',
+                      help="Set the video privacy (anybody; nobody; contacts; users:u1,u2; password:pwd; disable)")
+    
 
     (options, args) = parser.parse_args(argv[1:])
 
@@ -91,6 +100,24 @@ def main(argv):
     client.do_upload(endp, tid, options.file)
     vid = client.vimeo_videos_upload_confirm(ticket_id=tid).find('ticket').attrib['video_id']
     print vid
+
+    if options.title != None:
+        client.vimeo_videos_setTitle(options.title, vid)
+
+    if options.privacy != None:
+        pusers = []
+        ppwd = None
+        ppriv = options.privacy
+        if options.privacy.startswith("users"):
+            pusers = options.privacy.split(":")[1].split(',')
+            ppriv = "users"
+        if options.privacy.startswith("password"):
+            ppwd = options.privacy.split(":")[1]
+            ppriv = "password"
+
+        client.vimeo_videos_setPrivacy(ppriv, vid, 
+                                       users=pusers, password=ppwd)
+        
     
 if __name__ == '__main__':
     main(sys.argv)
