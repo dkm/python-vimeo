@@ -46,7 +46,7 @@ class VimeoConfig(ConfigParser.ConfigParser):
             self.set("appli", "consumer_secret", options.secret)
 
         if options.access_token != None:
-            self.set("auth", "token", options.token)
+            self.set("auth", "token", options.access_token)
 
         if options.access_token_secret != None:
             self.set("auth", "token_secret", options.token_secret)
