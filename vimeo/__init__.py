@@ -171,12 +171,14 @@ class VimeoOAuthClient(oauth.OAuthClient):
                                                                        http_method='GET',
                                                                        http_url=API_REST_URL,
                                                                        parameters=parameters)
+            oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
         else:
             oauth_request = oauth.OAuthRequest.from_consumer_and_token(self.consumer,
                                                                        http_method='GET',
                                                                        http_url=API_REST_URL,
                                                                        parameters=parameters)
-        oauth_request.sign_request(HMAC_SHA1, self.consumer, self.token)
+            oauth_request.sign_request(HMAC_SHA1, self.consumer, None)
+
         return self.curly.do_rest_call(oauth_request.to_url())
         
     def _do_vimeo_unauthenticated_call(self, method, parameters={}):
@@ -353,9 +355,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params = {'channel_id': channel_id}
 
-        ## FIXME: need to use authenticated auth ?!
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
-                                   parameters=params, authenticated=True) 
+                                   parameters=params, authenticated=False) 
 
         
     def vimeo_channels_getModerators(self, channel_id, page=None, per_page=None):
@@ -456,10 +457,9 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['per_page'] = per_page
         if page != None:
             params['page'] = page
-        ##FIXME doc says no auth required, but using the unauth method fails here...
-        ## maybe this is a bug from our part...
+
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
-                                   parameters=params, authenticated=True)
+                                   parameters=params, authenticated=False)
 
 
 ###
@@ -1040,9 +1040,9 @@ class VimeoOAuthClient(oauth.OAuthClient):
         Get lots of information on a video.
         """
         params={'video_id':video_id}
-        ## FIXME need to use auth call ?! must be bug
+
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
-                                   parameters=params, authenticated=True)
+                                   parameters=params, authenticated=False)
         
 
     # full_response (optional)
