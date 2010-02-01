@@ -49,10 +49,24 @@ def main(argv):
                       help="Get user quota", action="store_true", default=False)
     parser.add_option('--get-channels',
                       help="Get all public channels", action="store_true", default=False)
-    parser.add_option('--get-channel-info',
+    parser.add_option('--get-channel-info', metavar="CHAN_ID",
                       help="Get info on a specific channel")
-    parser.add_option('--get-video-info',
+    parser.add_option('--get-video-info', metavar="VID_ID",
                       help="Get info on a specific video")
+    parser.add_option('--page', metavar="NUM",
+                      help="Page number, when it makes sense...")
+    parser.add_option('--per-page', metavar="NUM",
+                      help="Per page number, when it makes sense...")
+    parser.add_option('--sort', metavar="SORT",
+                      help="sort order, when it makes sense (accepted values depends on the query)...")
+    parser.add_option('--get-channel-moderators', metavar="CHAN_ID",
+                      help="Get moderators for a specific channel")
+    parser.add_option('--get-channel-subscribers', metavar='CHAN_ID',
+                      help="Get subscribers for a specific channel")
+    parser.add_option('--get-channel-videos', metavar='CHAN_ID',
+                      help="Get videos for a specific channel")
+    parser.add_option('--get-contacts', metavar='USER_ID',
+                      help="Get all contacts for a specific user")
 
     (options, args) = parser.parse_args(argv[1:])
 
@@ -77,15 +91,14 @@ def main(argv):
     if options.quota:
         quota = client.vimeo_videos_upload_getQuota().find('user/upload_space').attrib['free']
         print "Your current quota is", int(quota)/(1024*1024), "MiB"
-        sys.exit(0)
 
-    if options.get_channels:
-        channels = client.vimeo_channels_getAll()
+    elif options.get_channels:
+        channels = client.vimeo_channels_getAll(page=options.page,
+                                                per_page=options.per_page)
         for channel in channels.findall("channels/channel"):
             print "Name (%s):" %channel.attrib['id'], channel.find('name').text
-        sys.exit(0)
     
-    if options.get_channel_info != None:
+    elif options.get_channel_info != None:
         info = client.vimeo_channels_getInfo(options.get_channel_info).find('channel')
         for text_item in ['name', 'description', 'created_on', 'modified_on', 'total_videos',
                           'total_subscribers', 'logo_url', 'badge_url', 'url', 'featured_description']:
@@ -95,13 +108,41 @@ def main(argv):
                 print "%s:" %text_item, info.find(text_item).text
         creator = info.find('creator')
         print "Creator: %s (%s)" %(creator.attrib['display_name'], creator.attrib['id'])
-        sys.exit(0)
-    
-    if options.get_video_info != None:
+       
+    elif options.get_video_info != None:
         info = client.vimeo_videos_getInfo(options.get_video_info)
         ET.dump(info)
-        sys.exit(0)
     
+    elif options.get_channel_moderators != None:
+        moderators = client.vimeo_channels_getModerators(options.get_channel_moderators,
+                                                         page=options.page,
+                                                         per_page=options.per_page)
+        for moderator in moderators.findall('moderators/user'):
+            print "Name: %s (%s)" %(moderator.attrib['display_name'], moderator.attrib['id'])
+
+    elif options.get_channel_subscribers != None:
+        subs = client.vimeo_channels_getSubscribers(options.get_channel_subscribers,
+                                                    page=options.page,
+                                                    per_page=options.per_page)
+        for sub in subs.findall('subscribers/subscriber'):
+            print "Name: %s (%s)" %(sub.attrib['display_name'], sub.attrib['id'])
+
+    elif options.get_channel_videos != None:
+        vids = client.vimeo_channels_getVideos(options.get_channel_videos,
+                                               page=options.page,
+                                               per_page=options.per_page)
+        for vid in vids.findall('videos/video'):
+            print "Video: %s (%s), uploaded %s" %(vid.attrib['title'], 
+                                                  vid.attrib['id'], 
+                                                  vid.attrib['upload_date'])
+    elif options.get_contacts:
+        contacts = client.vimeo_contacts_getAll(options.get_contacts,
+                                                sort=options.sort,
+                                                page=options.page,
+                                                per_page=options.per_page)
+        for contact in contacts.findall('contacts/contact'):
+            print "Contact: %s (%s)" %(contact.attrib['display_name'], contact.attrib['id'])
+                                                
 if __name__ == '__main__':
     main(sys.argv)
 
