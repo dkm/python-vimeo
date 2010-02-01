@@ -5,12 +5,12 @@
 # Python module for Vimeo
 # originaly part of 'plopifier'
 #
-# Plopifier is free software: you can redistribute it and/or modify
+# This is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Plopifier is distributed in the hope that it will be useful,
+# This is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -353,8 +353,9 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         params = {'channel_id': channel_id}
 
+        ## FIXME: need to use authenticated auth ?!
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
-                                   parameters=params, authenticated=False) 
+                                   parameters=params, authenticated=True) 
 
         
     def vimeo_channels_getModerators(self, channel_id, page=None, per_page=None):
@@ -455,9 +456,10 @@ class VimeoOAuthClient(oauth.OAuthClient):
             params['per_page'] = per_page
         if page != None:
             params['page'] = page
-
+        ##FIXME doc says no auth required, but using the unauth method fails here...
+        ## maybe this is a bug from our part...
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
-                                   parameters=params, authenticated=False)
+                                   parameters=params, authenticated=True)
 
 
 ###
@@ -1038,8 +1040,9 @@ class VimeoOAuthClient(oauth.OAuthClient):
         Get lots of information on a video.
         """
         params={'video_id':video_id}
+        ## FIXME need to use auth call ?! must be bug
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
-                                   parameters=params, authenticated=False)
+                                   parameters=params, authenticated=True)
         
 
     # full_response (optional)
@@ -1286,8 +1289,8 @@ class VimeoOAuthClient(oauth.OAuthClient):
         """
         Sets the title of a video, overwriting the previous title.
         """
-        params={'video_id':video_id,
-                'title':title}
+        params={'video_id': video_id,
+                'title': title}
         return self._do_vimeo_call(inspect.stack()[0][3].replace('_', '.'),
                                    parameters=params)
 

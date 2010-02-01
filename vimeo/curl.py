@@ -5,12 +5,12 @@
 # Python module for Vimeo
 # originaly part of 'plopifier'
 #
-# Plopifier is free software: you can redistribute it and/or modify
+# This is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Plopifier is distributed in the hope that it will be useful,
+# This is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -73,6 +73,7 @@ class CurlyRequest:
         """
         Send a simple GET request
         """
+
         self.buf = ""
         curl = pycurl.Curl()
         curl.setopt(pycurl.USERAGENT, USER_AGENT)

@@ -34,6 +34,6 @@ Python module for using API offered by vimeo
     maintainer_email = 'dkm@kataplop.net',
     license = "GPL",
     packages = ['vimeo'],
-    scripts=['bin/vimeo-upload.py'],
+    scripts=['bin/vimeo-upload.py', 'bin/vimeo-query.py'],
     )
 
