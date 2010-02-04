@@ -152,13 +152,13 @@ class VimeoOAuthClient(oauth.OAuthClient):
         return oauth_request.parameters
 
 
-    def do_upload(self, endpoint, ticket_id, filename):
+    def do_upload(self, endpoint, ticket_id, filename, callback=None):
         post_data = self._do_compute_vimeo_upload(endpoint, ticket_id)
         # make sure everything is string !
         post_data_l = [(k,str(v)) for (k,v) in post_data.items()]
         post_data_l.append(('file_data', (pycurl.FORM_FILE, filename)))
 
-        self.curly.do_post_call(endpoint, post_data_l, True)
+        self.curly.do_post_call(endpoint, post_data_l, True, progress_callback=callback)
 
     def _do_vimeo_call(self, method, parameters={}, authenticated=True):
         """

@@ -102,10 +102,15 @@ class CurlyRequest:
         print "\r%s[%s]  " %(TURNING_BAR[self.pidx], pstr),
         return 0
         
-    def do_post_call(self, url, args, use_progress=False):
+    def do_post_call(self, url, args, use_progress=False, progress_callback=None):
         """
         Send a simple POST request
         """
+        if callback != None:
+            my_cb = callback
+        else:
+            my_cb = self._upload_progress
+
         c = pycurl.Curl()
         c.setopt(c.POST, 1)
         c.setopt(c.URL, url)
@@ -117,7 +122,7 @@ class CurlyRequest:
         c.setopt(c.NOPROGRESS, 0)
         
         if use_progress:
-            c.setopt(c.PROGRESSFUNCTION, self._upload_progress)
+            c.setopt(c.PROGRESSFUNCTION, my_cb)
 
         c.perform()
         c.close()
