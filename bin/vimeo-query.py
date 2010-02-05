@@ -49,7 +49,7 @@ def main(argv):
                       help="Get user quota", action="store_true", default=False)
     parser.add_option('--get-channels',
                       help="Get all public channels", action="store_true", default=False)
-    parser.add_option('--get-channel-info', metavar="CHAN_ID",
+    parser.add_option('--get-channel-info', metavar="CHANNEL_ID",
                       help="Get info on a specific channel")
     parser.add_option('--get-video-info', metavar="VID_ID",
                       help="Get info on a specific video")
@@ -67,6 +67,34 @@ def main(argv):
                       help="Get videos for a specific channel")
     parser.add_option('--get-contacts', metavar='USER_ID',
                       help="Get all contacts for a specific user")
+
+    parser.add_option('--album', metavar="ALBUM_ID",
+                      action="append",
+                      help="Specify on which album other command acts."
+                           +"Can be used more than once")
+    parser.add_option('--channel', metavar="CHANNEL_ID",
+                      action="append",
+                      help="Specify on which channel other command acts."
+                           +"Can be used more than once")
+
+    parser.add_option('--add-video', metavar='VIDEO_ID',
+                      help="Add the given video to the album(s) and channel(s)" +
+                           "specified with --album and --channel argument.")
+
+    parser.add_option('--remove-video', metavar='VIDEO_ID',
+                      help="Remove the given video from the album(s) and channel(s)" +
+                           "specified with --album and --channel argument.")
+
+    parser.add_option('--set-album-description', metavar='DESCRIPTION',
+                      help="Set the description for the album specified with --album")
+
+    parser.add_option('--set-channel-description', metavar='DESCRIPTION',
+                      help="Set the description for the channel specified with --channel")
+
+    parser.add_option('--set-password', metavar='PASSWORD',
+                      help="Set the password for the channel(s), album(s) and video(s) specified with --channel, --album and --video")
+
+
 
     (options, args) = parser.parse_args(argv[1:])
 
@@ -111,7 +139,7 @@ def main(argv):
        
     elif options.get_video_info != None:
         info = client.vimeo_videos_getInfo(options.get_video_info)
-        ET.dump(info)
+
     
     elif options.get_channel_moderators != None:
         moderators = client.vimeo_channels_getModerators(options.get_channel_moderators,
@@ -142,7 +170,64 @@ def main(argv):
                                                 per_page=options.per_page)
         for contact in contacts.findall('contacts/contact'):
             print "Contact: %s (%s)" %(contact.attrib['display_name'], contact.attrib['id'])
-                                                
+
+    elif options.add_video:
+        if options.album:
+            for alb in options.album:
+                client.vimeo_albums_addVideo(options.add_video,
+                                             alb)
+        if options.channel:
+            for chan in options.channel:
+                client.vimeo_channels_addVideo(options.add_video,
+                                               chan)
+
+    elif options.remove_video:
+        if options.album:
+            for alb in options.album:
+                client.vimeo_albums_removeVideo(options.remove_video,
+                                                alb)
+        if options.channel:
+            for chan in options.channel:
+                client.vimeo_channels_removeVideo(options.remove_video,
+                                                  chan)
+
+    elif options.set_album_description:
+        if options.album:
+            for alb in options.album:
+                client.vimeo_albums_setDescription(options.set_album_description,
+                                                   alb)
+        else:
+            print "Missing album(s) for the set-album-description command"
+            parser.print_help()
+            sys.exit(-1)
+
+    elif options.set_channel_description:
+        if options.channel:
+            for chan in options.channel:
+                client.vimeo_channels_setDescription(options.set_channel_description,
+                                                     chan)
+        else:
+            print "Missing channel(s) for the set-channel-description command"
+            parser.print_help()
+            sys.exit(-1)
+
+    elif options.set_password:
+        if options.channel:
+            for chan in options.channel:
+                client.vimeo_channels_setPassword(options.set_password,
+                                                  chan)
+        if options.album:
+            for alb in options.album:
+                client.vimeo_albums_setPassword(options.set_password,
+                                                   alb)
+        if options.video:
+            for vid in options.video:
+                client.vimeo_videos_setPrivacy(privacy='password',
+                                               password=options.set_password,
+                                               video_id=vid)
+
+        
+
 if __name__ == '__main__':
     main(sys.argv)
 
