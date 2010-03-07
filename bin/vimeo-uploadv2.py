@@ -25,9 +25,12 @@ This is an upload script for Vimeo using its v2 API
 
 import vimeo
 import vimeo.config
-import sys
+import sys,time
 import optparse
 
+## use a sleep to wait a few secs for vimeo servers to be synced.
+## sometimes, going too fast
+sleep_workaround = True
 
 def main(argv):
     parser = optparse.OptionParser(
@@ -51,6 +54,8 @@ def main(argv):
                       help="Video file to upload")
     parser.add_option('--title',
                       help="Set the video title")
+    parser.add_option('--description',
+                      help="Set the video description")
     parser.add_option('--privacy',
                       help="Set the video privacy (anybody; nobody; contacts; users:u1,u2; password:pwd; disable)")
     
@@ -100,8 +105,14 @@ def main(argv):
     vid = client.vimeo_videos_upload_confirm(ticket_id=tid).find('ticket').attrib['video_id']
     print vid
 
+    # do we need to wait a bit for vimeo servers ?
+    if sleep_workaround and (options.title != None or options.description != None):
+        time.sleep(5)        
+
     if options.title != None:
         client.vimeo_videos_setTitle(options.title, vid)
+    if options.description != None:
+        client.vimeo_videos_setDescription(options.description, vid)
 
     if options.privacy != None:
         pusers = []
