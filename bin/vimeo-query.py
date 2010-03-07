@@ -248,12 +248,12 @@ def main(argv):
         for vid in options.video:
             if options.album:
                 for alb in options.album:
-                    client.vimeo_albums_addVideo(vid,
-                                                 alb)
+                    client.vimeo_albums_addVideo(alb,
+                                                 vid)
             if options.channel:
                 for chan in options.channel:
-                    client.vimeo_channels_addVideo(vid,
-                                                   chan)
+                    client.vimeo_channels_addVideo(chan,
+                                                   vid)
 
     elif options.remove_video:
         if not check_video():
