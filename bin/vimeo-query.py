@@ -121,12 +121,14 @@ def main(argv):
 
     (options, args) = parser.parse_args(argv[1:])
 
-
     def check_user():
         return options.user != None
 
     def check_channel():
         return options.channel != None
+
+    def check_video():
+	return options.video != None
             
     def check_album():
         return options.album != None
