@@ -51,12 +51,17 @@ def main(argv):
 
     parser.add_option('--album', metavar="ALBUM_ID",
                       action="append",
-                      help="Specify on which album other command acts."
+                      help="Specify on which album other commands act."
+                           +"Can be used more than once")
+    parser.add_option('--group', metavar="GROUP_ID",
+                      action="append",
+                      help="Specify on which group other commands act."
                            +"Can be used more than once")
     parser.add_option('--channel', metavar="CHANNEL_ID",
                       action="append",
-                      help="Specify on which channel other command acts."
+                      help="Specify on which channel other commands act."
                            +"Can be used more than once")
+
     parser.add_option('--video', metavar="VIDEO_ID",
                       action="append",
                       help="Specify on which video other command acts."
@@ -69,6 +74,25 @@ def main(argv):
     parser.add_option('--quota',
                       help="Get user quota", action="store_true", default=False)
 
+    parser.add_option('--get-groups',
+                      help="Get all public groups", action="store_true", default=False)
+    parser.add_option('--get-group-files',
+                      help="Get list of files for the GROUP_ID", 
+                      action="store_true",
+                      default=False)
+    parser.add_option('--get-group-info',
+                      help="Get information of the GROUP_ID", 
+                      action="store_true",
+                      default=False)
+    parser.add_option('--get-group-members',
+                      help="Get the members of the GROUP_ID", 
+                      action="store_true",
+                      default=False)
+    parser.add_option('--get-group-video-comments',
+                      help="Get a list of the comments for VIDEO_ID in GROUP_ID", 
+                      action="store_true",
+                      default=False)
+    
     parser.add_option('--get-channels',
                       help="Get all public channels", action="store_true", default=False)
     parser.add_option('--get-channel-info',
@@ -83,21 +107,29 @@ def main(argv):
                       help="Page number, when it makes sense...")
     parser.add_option('--per-page', metavar="NUM",
                       help="Per page number, when it makes sense...")
-    parser.add_option('--sort', metavar="SORT",
+    parser.add_option('--sort', metavar="SORT_ID",
                       help="sort order, when it makes sense (accepted values depends on the query)...")
     parser.add_option('--get-channel-moderators',
                       help="Get moderators for channel CHANNEL_ID",
                       action="store_true")
     parser.add_option('--get-channel-subscribers',
-                      help="Get subscribers for channel ChANNel_ID",
+                      help="Get subscribers for channel CHANNEL_ID",
                       action="store_true")
     parser.add_option('--get-channel-videos',
-                      help="Get videos for channel CHANNEL_ID",
+                      help="Get videos for channel CHANNEL_ID using the sort SORT_ID",
                       action="store_true")
     parser.add_option('--get-contacts',
                       help="Get all contacts for user USER_ID",
                       action="store_true")
-
+    parser.add_option('--get-mutual-contacts',
+                      help="Get the mutual contacts for USER_ID",
+                      action="store_true")
+    parser.add_option('--get-online-contacts',
+                      help="Get the user's online contacts",
+                      action="store_true")
+    parser.add_option('--get-who-added-contacts',
+                      help="Get the contacts who added USER_ID as a contact",
+                      action="store_true")
 
     parser.add_option('--add-video',
                       help="Add the video VIDEO_ID to the album ALBUM_ID and channel" +
@@ -129,6 +161,9 @@ def main(argv):
 
     def check_video():
 	return options.video != None
+
+    def check_group():
+        return options.group != None
             
     def check_album():
         return options.album != None
@@ -157,6 +192,7 @@ def main(argv):
 
     elif options.get_channels:
         channels = client.vimeo_channels_getAll(page=options.page,
+                                                sort=options.sort,
                                                 per_page=options.per_page)
         for channel in channels.findall("channels/channel"):
             print "Name (%s):" %channel.attrib['id'], channel.find('name').text
@@ -241,6 +277,38 @@ def main(argv):
             for contact in contacts.findall('contacts/contact'):
                 print "Contact: %s (%s)" %(contact.attrib['display_name'], contact.attrib['id'])
 
+    elif options.get_mutual_contacts:
+        if not check_user():
+            print "Missing user"
+            parser.print_help()
+            sys.exit(-1)
+
+        for user in options.user:
+            mutual_contacts = client.vimeo_contacts_getMutual(user,
+                                                       page=options.page,
+                                                       per_page=options.per_page)
+            for contact in mutual_contacts.findall('contacts/contact'):
+                print "Contact: %s (%s)" %(contact.attrib['display_name'], contact.attrib['id'])
+    elif options.get_online_contacts:
+        online_contacts = client.vimeo_contacts_getOnline(page=options.page,
+                                                          per_page=options.per_page)
+        for contact in mutual_contacts.findall('contacts/contact'):
+            print "Contact: %s (%s)" %(contact.attrib['display_name'], contact.attrib['id'])
+
+    elif options.get_who_added_contacts:
+        if not check_user():
+            print "Missing user"
+            parser.print_help()
+            sys.exit(-1)
+
+        for user in options.user:
+            who_added_contacts = client.vimeo_contacts_getWhoAdded(user,
+                                                                   page=options.page,
+                                                                   per_page=options.per_page,
+                                                                   sort=options.sort)
+            for contact in who_added_contacts.findall('contacts/contact'):
+                print "Contact: %s (%s)" %(contact.attrib['display_name'], contact.attrib['id'])
+
     elif options.add_video:
         if not check_video():
             print "Missing video"
@@ -256,6 +324,10 @@ def main(argv):
                 for chan in options.channel:
                     client.vimeo_channels_addVideo(chan,
                                                    vid)
+            if options.group:
+                for chan in options.group:
+                    client.vimeo_groups_addVideo(chan,
+                                                 vid)
 
     elif options.remove_video:
         if not check_video():
@@ -272,6 +344,77 @@ def main(argv):
                 for chan in options.channel:
                     client.vimeo_channels_removeVideo(vid,
                                                       chan)
+    elif options.get_groups:
+        groups = client.vimeo_groups_getAll(page=options.page,
+                                              sort=options.sort,
+                                              per_page=options.per_page)
+        for group in groups.findall("groups/group"):
+            print "Name (%s):" %group.attrib['id'], group.find('name').text
+    elif options.get_groups:
+        if not check_group():
+            print "Missing group"
+            parser.print_help()
+            sys.exit(-1)
+
+        for group in option.group:
+            groups = client.vimeo_groups_getFiles(group,
+                                                  page=options.page,
+                                                  per_page=options.per_page)
+## FIXME: display the files !
+#             for group in groups.findall("groups/group"):
+#                 print "Name (%s):" %group.attrib['id'], group.find('name').text
+    elif options.get_group_info:
+        if not check_group():
+            print "Missing group"
+            parser.print_help()
+            sys.exit(-1)
+
+        for group in option.group:
+            group_info = client.vimeo_groups_getInfo(group)
+        ## FIXME: display the group info !
+    elif options.get_group_members:
+        if not check_group():
+            print "Missing group"
+            parser.print_help()
+            sys.exit(-1)
+
+        for group in option.group:
+            group_members = client.vimeo_groups_getMembers(group,
+                                                           options.page,
+                                                           option.per_page,
+                                                           option.sort)
+        ## FIXME: display the group_members info !
+        
+    elif options.get_group_moderators:
+        if not check_group():
+            print "Missing group"
+            parser.print_help()
+            sys.exit(-1)
+
+        for group in options.group:
+            moderators = client.vimeo_groups_getModerators(group,
+                                                           page=options.page,
+                                                           per_page=options.per_page)
+            for moderator in moderators.findall('moderators/user'):
+                print "Name: %s (%s)" %(moderator.attrib['display_name'], moderator.attrib['id'])
+    elif options.get_group_video_comments:
+        if not check_group():
+            print "Missing group"
+            parser.print_help()
+            sys.exit(-1)
+
+        if not check_video():
+            print "Missing video"
+            parser.print_help()
+            sys.exit(-1)
+
+        for group in option.group:
+            for video in options.video:
+                comments = client.vimeo_groups_getVideoComments(group,
+                                                                video,
+                                                                page=options.page,
+                                                                per_page=options.per_page)
+                ##FIXME: display comments !
 
     elif options.set_album_description:
         if not check_album():
@@ -292,7 +435,6 @@ def main(argv):
         for chan in options.channel:
             client.vimeo_channels_setDescription(options.set_channel_description,
                                                  chan)
-
     elif options.set_password:
         if options.channel:
             for chan in options.channel:
