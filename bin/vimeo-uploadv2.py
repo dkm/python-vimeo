@@ -46,9 +46,6 @@ def main(argv):
                       help="Access token")
     parser.add_option('-y', '--access-token-secret',
                       help="Access token secret")
-    parser.add_option('-v', '--verifier',
-                      help="Verifier for token")
-
     # file upload stuff
     parser.add_option('-f', '--file',
                       help="Video file to upload")
@@ -79,7 +76,7 @@ def main(argv):
         parser.print_help()
         sys.exit(-1)
 
-    if not (vconfig.has_option("auth", "token") and vconfig.has_option("auth", "token_secret") and vconfig.has_option("auth", "verifier")):
+    if not (vconfig.has_option("auth", "token") and vconfig.has_option("auth", "token_secret")):
         client = vimeo.VimeoOAuthClient(vconfig.get("appli", "consumer_key"),
                                         vconfig.get("appli", "consumer_secret"))
         client.get_request_token()
@@ -91,8 +88,8 @@ def main(argv):
         client = vimeo.VimeoOAuthClient(vconfig.get("appli", "consumer_key"),
                                         vconfig.get("appli", "consumer_secret"),
                                         token=vconfig.get("auth","token"),
-                                        token_secret=vconfig.get("auth", "token_secret"),
-                                        verifier=vconfig.get("auth", "verifier"))
+                                        token_secret=vconfig.get("auth", "token_secret"))
+
 
 
     quota = client.vimeo_videos_upload_getQuota().find('user/upload_space').attrib['free']
