@@ -25,6 +25,8 @@ This is an upload script for Vimeo using its v2 API
 
 import vimeo
 import vimeo.config
+import vimeo.convenience
+
 import sys,time
 import optparse
 
@@ -55,7 +57,6 @@ def main(argv):
                       help="Set the video description")
     parser.add_option('--privacy',
                       help="Set the video privacy (anybody; nobody; contacts; users:u1,u2; password:pwd; disable)")
-    
 
     (options, args) = parser.parse_args(argv[1:])
 
@@ -85,23 +86,20 @@ def main(argv):
         print "Using", verifier, "as verifier"
         print client.get_access_token(verifier)
     else:
-        client = vimeo.VimeoOAuthClient(vconfig.get("appli", "consumer_key"),
-                                        vconfig.get("appli", "consumer_secret"),
-                                        token=vconfig.get("auth","token"),
-                                        token_secret=vconfig.get("auth", "token_secret"))
+        client = vimeo.VimeoClient(key=vconfig.get("appli", "consumer_key"),
+                                   secret=vconfig.get("appli", "consumer_secret"),
+                                   token=vconfig.get("auth","token"),
+                                   token_secret=vconfig.get("auth", "token_secret"),
+                                   format="json")
 
-
-
-    quota = client.vimeo_videos_upload_getQuota().find('user/upload_space').attrib['free']
-    print "Your current quota is", int(quota)/(1024*1024), "MiB"
+    quota = client.vimeo_videos_upload_getQuota()
+    print "Your current quota is", int(quota['upload_space']['free'])/(1024*1024), "MiB"
     
-    t = client.vimeo_videos_upload_getTicket().find('ticket')
-    (tid, endp) = (t.attrib['id'], t.attrib['endpoint'])
-    print "Will upload", options.file
-    client.do_upload(endp, tid, options.file)
-    vid = client.vimeo_videos_upload_confirm(ticket_id=tid).find('ticket').attrib['video_id']
+    t = client.vimeo_videos_upload_getTicket()
+    vup = vimeo.convenience.VimeoUploader(client, t, quota=quota)
+    vup.upload(options.file)
+    vid = vup.complete()['video_id']
     print vid
-
     # do we need to wait a bit for vimeo servers ?
     if sleep_workaround and (options.title != None or options.description != None):
         time.sleep(5)        
@@ -125,7 +123,6 @@ def main(argv):
         client.vimeo_videos_setPrivacy(ppriv, vid, 
                                        users=pusers, password=ppwd)
         
-    
 if __name__ == '__main__':
     main(sys.argv)
 
