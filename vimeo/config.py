@@ -50,6 +50,3 @@ class VimeoConfig(ConfigParser.ConfigParser):
 
         if options.access_token_secret != None:
             self.set("auth", "token_secret", options.token_secret)
-
-        if options.verifier != None:
-            self.set("auth", "verifier", options.verifier)
