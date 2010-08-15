@@ -1,3 +1,15 @@
+python-vimeo (0.4d20100815-1~ppa1) lucid; urgency=low
+
+  * merge with code from mishk (http://github.com/mishk/python-vimeo)
+
+ -- Marc Poulhiès <dkm@kataplop.net>  Sun, 15 Aug 2010 14:08:02 +0200
+
+python-vimeo (0.3-1~ppa1) karmic; urgency=low
+
+  * new query script + few bugfixes
+
+ -- Marc Poulhiès <dkm@kataplop.net>  Mon, 08 Feb 2010 22:21:18 +0100
+
 python-vimeo (0.2-1~ppa1) jaunty; urgency=low
 
   * add a simple upload script

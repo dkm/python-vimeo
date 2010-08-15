@@ -32,8 +32,8 @@ Python module for using API offered by vimeo
     url = "http://github.com/dkm/python-vimeo",
     maintainer = 'Marc Poulhiès',
     maintainer_email = 'dkm@kataplop.net',
-    license = "GPL",
+    license = "GPL,MIT",
     packages = ['vimeo'],
-    scripts=['bin/vimeo-upload.py', 'bin/vimeo-query.py'],
+    scripts=['bin/vimeo-uploadv2.py', 'bin/vimeo-query.py'],
     )
 
