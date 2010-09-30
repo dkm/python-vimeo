@@ -190,7 +190,7 @@ class Vimeo:
         return m.hexdigest()
 
     def get_auth_url(self, perms="read"):
-        if self.frob == None:
+        if not self.frob:
             raise VimeoException()
 
         burl = "http://vimeo.com/services/auth/" 
@@ -201,10 +201,10 @@ class Vimeo:
 
 
     def do_upload(self, video, title, ticket=None, tags=[]):
-        if self.auth_token == None:
+        if not self.auth_token :
             raise VimeoException()
 
-        if ticket != None:
+        if ticket :
             upload_ticket = ticket
         else:
             upload_ticket = self.videos_getUploadTicket()
@@ -243,14 +243,14 @@ class Vimeo:
 
         frob = t.find("frob")
 
-        if frob == None:
+        if not frob :
             raise VimeoException()
 
         self.frob = frob.text
 
         
     def auth_getToken(self):
-        if self.frob == None:
+        if not self.frob :
             msg = "Missing frob for getting authentication ticket!"
             raise VimeoException(msg)
 
@@ -283,7 +283,7 @@ class Vimeo:
 
 
     def test_login(self):
-        if self.auth_token == None:
+        if not self.auth_token :
             raise VimeoException("Missing authentication token!")
 
         m = "vimeo.test.login"
@@ -294,7 +294,7 @@ class Vimeo:
         t = self.curly.do_rest_call(url)
         un = t.find("user/username")
 
-        if un == None:
+        if not un :
             raise VimeoException("Invalid response from server !")
 
         uid = t.find("user").attrib['id']
@@ -326,10 +326,10 @@ class Vimeo:
 
         
     def videos_getUploadTicket(self):
-        if self.auth_token == None:
+        if not self.auth_token :
             raise VimeoException("Missing authentication token!")
 
-        if self.user_id == None:
+        if not self.user_id :
             raise VimeoException("Missing user_id, you have to " +
                                  "call set_userid() first!")
 
@@ -343,7 +343,7 @@ class Vimeo:
 
         upload_ticket = t.find("ticket")
         
-        if upload_ticket == None:
+        if not upload_ticket :
             print t.attrib
             print t.find('err').attrib
             raise VimeoException("Invalid response from server!")
@@ -362,7 +362,7 @@ class Vimeo:
 
         upload_ticket = t.find("ticket")
 
-        if upload_ticket == None or 'video_id' not in upload_ticket.attrib:
+        if not upload_ticket or 'video_id' not in upload_ticket.attrib:
             raise VimeoException("Invalid response from server!")
 
         return upload_ticket.attrib['video_id']

@@ -72,7 +72,7 @@ def main(argv):
         parser.print_help()
         sys.exit(-1)
 
-    if options.file == None:
+    if not options.file :
         print "Missing file to upload!"
         parser.print_help()
         sys.exit(-1)
@@ -101,15 +101,15 @@ def main(argv):
     vid = vup.complete()['video_id']
     print vid
     # do we need to wait a bit for vimeo servers ?
-    if sleep_workaround and (options.title != None or options.description != None):
+    if sleep_workaround and (options.title or options.description):
         time.sleep(5)        
 
-    if options.title != None:
+    if options.title:
         client.vimeo_videos_setTitle(options.title, vid)
-    if options.description != None:
+    if options.description :
         client.vimeo_videos_setDescription(options.description, vid)
 
-    if options.privacy != None:
+    if options.privacy :
         pusers = []
         ppwd = None
         ppriv = options.privacy
