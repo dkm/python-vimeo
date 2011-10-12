@@ -39,6 +39,9 @@ class VimeoConfig(ConfigParser.ConfigParser):
         if not options :
             return
 
+        self.add_section("appli")
+        self.add_section("auth")
+
         if options.key:
             self.set("appli", "consumer_key", options.key)
 
