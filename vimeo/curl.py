@@ -106,7 +106,7 @@ class CurlyRequest:
         """
         Send a simple POST request
         """
-        if progress_callback != None:
+        if progress_callback:
             my_cb = progress_callback
         else:
             my_cb = self._upload_progress

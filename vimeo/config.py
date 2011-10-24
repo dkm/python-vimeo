@@ -36,17 +36,20 @@ class VimeoConfig(ConfigParser.ConfigParser):
                 raise e
             # if not, simply ignore the error, config is empty
 
-        if options == None:
+        if not options :
             return
 
-        if options.key != None:
+        self.add_section("appli")
+        self.add_section("auth")
+
+        if options.key:
             self.set("appli", "consumer_key", options.key)
 
-        if options.secret != None:
+        if options.secret:
             self.set("appli", "consumer_secret", options.secret)
 
-        if options.access_token != None:
+        if options.access_token:
             self.set("auth", "token", options.access_token)
 
-        if options.access_token_secret != None:
+        if options.access_token_secret:
             self.set("auth", "token_secret", options.token_secret)

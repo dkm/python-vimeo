@@ -205,7 +205,7 @@ def main(argv):
                               'total_subscribers', 'logo_url', 'badge_url', 'url', 'featured_description']:
                           
                 it = info.get(text_item)
-                if it != None:
+                if it:
                     print "%s:" %text_item, info.get(text_item)
             creator = info['creator']
             print "Creator: %s (%s)" %(creator['display_name'], creator['id'])
@@ -219,7 +219,7 @@ def main(argv):
         for vid in options.video:
             info = client.vimeo_videos_getInfo(video_id=vid)
             ## TODO pretty print results ?
-            print info
+            pprint.pprint(info)
     
     elif options.get_channel_moderators:
         if not check_channel():
@@ -254,7 +254,7 @@ def main(argv):
                 for sub in subs['subscriber']:
                     print "Name: %s (%s)" %(sub['display_name'], sub['id'])
 
-    elif options.get_channel_videos != None:
+    elif options.get_channel_videos:
         if not check_channel():
             print "Missing channel"
             parser.print_help()
