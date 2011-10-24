@@ -78,10 +78,10 @@ def main(argv):
         sys.exit(-1)
 
     if not (vconfig.has_option("auth", "token") and vconfig.has_option("auth", "token_secret")):
-        client = vimeo.VimeoOAuthClient(vconfig.get("appli", "consumer_key"),
-                                        vconfig.get("appli", "consumer_secret"))
+        client = vimeo.VimeoClient(key=vconfig.get("appli", "consumer_key"),
+                                   secret=vconfig.get("appli", "consumer_secret"))
         client.get_request_token()
-        print client.get_authorize_token_url(permission="write")
+        print client.get_authorization_url(permission="write")
         verifier = sys.stdin.readline().strip()
         print "Using", verifier, "as verifier"
         print client.get_access_token(verifier)
