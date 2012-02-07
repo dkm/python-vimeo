@@ -64,10 +64,9 @@ import oauth2
 # by default expects to find your key and secret in settings.py (django)
 # change this if they're someplace else (expecting strings for both)
 try:
-    from settings import VIMEO_KEY, VIMEO_SECRET
+    from settings import VIMEO_KEY, VIMEO_SECRET, VIMEO_CALLBACK_URL
 except ImportError:
-    VIMEO_KEY, VIMEO_SECRET = None, None
-
+    VIMEO_KEY, VIMEO_SECRET, VIMEO_CALLBACK_URL = None, None, None
 LOG = False
 
 class VimeoError(Exception):
@@ -250,8 +249,9 @@ class VimeoClient(object):
     _NO_CACHE = ("vimeo_videos_upload_getTicket",
                  "vimeo_videos_upload_getQuota")
 
-    def __init__(self, key=VIMEO_KEY, secret=VIMEO_SECRET, format="xml",
-                 token=None, token_secret=None, cache_timeout=120):
+    def __init__(self, key=VIMEO_KEY, secret=VIMEO_SECRET, 
+                 callback=VIMEO_CALLBACK_URL, format="xml", token=None, 
+                 token_secret=None, cache_timeout=120):
         # memoizing
         self._cache = {}
         self._timeouts = {}
@@ -265,6 +265,7 @@ class VimeoClient(object):
 
         self.key = key
         self.secret = secret
+        self.callback = callback
         self.consumer = oauth2.Consumer(self.key, self.secret)
 
         # any request made with the .client attr below is automatically
@@ -399,7 +400,13 @@ class VimeoClient(object):
         Internal method that gets a new token from the request_url and sets it
         to self.token on success.
         """
-        resp, content = self.client.request(request_url, *args, **kwargs)
+        resp, content = self.client.request(
+                                        request_url, 
+                                        "POST",
+                                        body=urlencode(
+                                            {'oauth_callback': self.callback}
+                                            )
+                                        )
 
         if self._is_success(resp):
             new_token = dict(urlparse.parse_qsl(content))
