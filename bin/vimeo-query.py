@@ -27,6 +27,7 @@ import vimeo
 import vimeo.config
 import sys
 import optparse
+import pprint
 
 def main(argv):
     parser = optparse.OptionParser(
@@ -85,7 +86,10 @@ def main(argv):
                       help="Get a list of the comments for VIDEO_ID in GROUP_ID", 
                       action="store_true",
                       default=False)
-    
+    parser.add_option('--get_group_moderators',
+                      help="Get a list of the group's moderators.",
+                      action="store_true",
+                      default=False)
     parser.add_option('--get-channels',
                       help="Get all public channels", action="store_true", default=False)
     parser.add_option('--get-channel-info',
@@ -153,7 +157,7 @@ def main(argv):
         return options.channel != None
 
     def check_video():
-	return options.video != None
+        return options.video != None
 
     def check_group():
         return options.group != None
@@ -220,7 +224,7 @@ def main(argv):
             info = client.vimeo_videos_getInfo(video_id=vid)
             ## TODO pretty print results ?
             pprint.pprint(info)
-    
+
     elif options.get_channel_moderators:
         if not check_channel():
             print "Missing channel"
