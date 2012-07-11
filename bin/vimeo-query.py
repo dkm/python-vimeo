@@ -99,6 +99,9 @@ def main(argv):
     parser.add_option('--get-video-info',
                       help="Get info on video VIDEO_ID",
                       action="store_true")
+    parser.add_option('--get-uploaded-videos',
+                      help="Get a list of videos uploaded by a user.",
+                      action="store_true")
 
     parser.add_option('--page', metavar="NUM",
                       help="Page number, when it makes sense...")
@@ -224,6 +227,22 @@ def main(argv):
             info = client.vimeo_videos_getInfo(video_id=vid)
             ## TODO pretty print results ?
             pprint.pprint(info)
+    elif options.get_uploaded_videos:
+        if not check_user():
+            print "Missing user"
+            parser.print_help()
+            sys.exit(-1)
+
+        for user in options.user:
+            vids = client.vimeo_videos_getUploaded(user_id=user,
+                                                   sort=options.sort,
+                                                   page=options.page,
+                                                   per_page=options.per_page)
+
+            for vid in vids['video']:
+                print "Video: %s (%s), uploaded %s" %(vid['title'], 
+                                                      vid['id'], 
+                                                      vid['upload_date'])
 
     elif options.get_channel_moderators:
         if not check_channel():
