@@ -10,7 +10,7 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
 #
@@ -37,9 +37,10 @@ from urllib import urlencode
 
 import urllib2
 import oauth2
+import requests
 
 from . import VimeoClient, VimeoError, API_REST_URL
-from httplib2wrap import Http
+
 
 class VimeoUploader(object):
     """
@@ -86,12 +87,10 @@ class VimeoUploader(object):
                              self.vimeo_client.consumer,
                              self.vimeo_client.token)
 
-        # httplib2 doesn't support uploading out of the box, so use our wrap
-        return Http().request_with_files(url=self.endpoint,
-                                         method="POST",
-                                         body=request,
-                                         body_files={"file_data" : open_file},
-                                         headers=headers)
+        files = {"file_data" : open_file}
+        return requests.post(
+            self.endpoint, data=request, files=files, headers=headers)
+
 
     def upload(self, file_path, chunk=False, chunk_size=2*1024*1024,
                chunk_complete_hook=None):
@@ -119,3 +118,4 @@ class VimeoUploader(object):
         """
         return self.vimeo_client.vimeo_videos_upload_complete(
                                                 ticket_id=self.ticket_id)
+
