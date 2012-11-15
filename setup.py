@@ -33,7 +33,8 @@ Python module for using API offered by vimeo
     maintainer = 'Marc Poulhiès',
     maintainer_email = 'dkm@kataplop.net',
     license = "GPL,MIT",
-    packages = ['vimeo', 'vimeo.httplib2wrap'],
+    packages = ['vimeo'],
     scripts=['bin/vimeo-uploadv2.py', 'bin/vimeo-query.py'],
-    )
+    install_requires=['requests']
+)
 
