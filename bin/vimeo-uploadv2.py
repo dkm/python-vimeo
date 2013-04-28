@@ -105,24 +105,24 @@ def main(argv):
         time.sleep(5)        
 
     if options.title:
-        client.vimeo_videos_setTitle(options.title, vid)
+        client.vimeo_videos_setTitle(video_id=vid, title=options.title)
+
     if options.description :
-        client.vimeo_videos_setDescription(options.description, vid)
+        client.vimeo_videos_setDescription(video_id=vid, description=options.description)
 
     if options.privacy :
-        pusers = []
+        pusers = None
         ppwd = None
         ppriv = options.privacy
         if options.privacy.startswith("users"):
-            pusers = options.privacy.split(":")[1].split(',')
+            pusers = options.privacy.split(":")[1]
             ppriv = "users"
         if options.privacy.startswith("password"):
             ppwd = options.privacy.split(":")[1]
             ppriv = "password"
 
-        client.vimeo_videos_setPrivacy(ppriv, vid, 
-                                       users=pusers, password=ppwd)
-        
+        client.vimeo_videos_setPrivacy(privacy=ppriv, video_id=vid, users=pusers, password=ppwd)
+
 if __name__ == '__main__':
     main(sys.argv)
 
