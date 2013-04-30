@@ -57,6 +57,8 @@ def main(argv):
                       help="Set the video description")
     parser.add_option('--privacy',
                       help="Set the video privacy (anybody; nobody; contacts; users:u1,u2; password:pwd; disable)")
+    parser.add_option('--tags',
+                      help="Set the video tags (comma separated)")
 
     (options, args) = parser.parse_args(argv[1:])
 
@@ -94,35 +96,38 @@ def main(argv):
 
     quota = client.vimeo_videos_upload_getQuota()
     print "Your current quota is", int(quota['upload_space']['free'])/(1024*1024), "MiB"
-    
+
     t = client.vimeo_videos_upload_getTicket()
     vup = vimeo.convenience.VimeoUploader(client, t, quota=quota)
     vup.upload(options.file)
     vid = vup.complete()['video_id']
     print vid
     # do we need to wait a bit for vimeo servers ?
-    if sleep_workaround and (options.title or options.description):
-        time.sleep(5)        
+    if sleep_workaround and (options.title or options.description or options.tags or options.privacy):
+        time.sleep(5)
 
     if options.title:
-        client.vimeo_videos_setTitle(options.title, vid)
+        client.vimeo_videos_setTitle(video_id=vid, title=options.title)
+
     if options.description :
-        client.vimeo_videos_setDescription(options.description, vid)
+        client.vimeo_videos_setDescription(video_id=vid, description=options.description)
+
+    if options.tags:
+        client.vimeo_videos_addTags(video_id=vid, tags=options.tags)
 
     if options.privacy :
-        pusers = []
+        pusers = None
         ppwd = None
         ppriv = options.privacy
         if options.privacy.startswith("users"):
-            pusers = options.privacy.split(":")[1].split(',')
+            pusers = options.privacy.split(":")[1]
             ppriv = "users"
         if options.privacy.startswith("password"):
             ppwd = options.privacy.split(":")[1]
             ppriv = "password"
 
-        client.vimeo_videos_setPrivacy(ppriv, vid, 
-                                       users=pusers, password=ppwd)
-        
+        client.vimeo_videos_setPrivacy(privacy=ppriv, video_id=vid, users=pusers, password=ppwd)
+
 if __name__ == '__main__':
     main(sys.argv)
 
